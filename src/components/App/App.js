@@ -12,6 +12,9 @@ import { GroupChatSettings } from '../GroupChatSettings/GroupChatSettings';
 import { ConnectedUserList } from '../UserList/UserList';
 import { ConnectedAddUserToChatPage } from '../AddUserToChatPage/AddUserToChatPage';
 import {routeNavigation} from '../../actions/route';
+import { addMessage } from '../../actions/messages';
+import { updateLastMessage } from '../../actions/rooms';
+import createBrowserNotification from '../../helpers/createBrowserNotification';
 import api from '../../api';
 
 // TODO: create page for the settings
@@ -48,6 +51,7 @@ const routeConfig = {
 
 const stateToProps = state => ({
     route: state.route,
+    payload: state.route.payload
 });
 
 class App extends Component {
@@ -55,6 +59,31 @@ class App extends Component {
     constructor(props) {
         super(props);
         this.loadApp = this.loadApp.bind(this);
+
+        api.onMessage(message => {
+            if (this.destroy) {
+                return;
+            }
+
+            if (this.props.payload.currentRoom === message.roomId) {
+                this.props.dispatch(addMessage(message));
+            }
+
+            this.props.dispatch(updateLastMessage(message));
+
+            if ((Notification.permission === 'granted')) {
+                const { roomId, userId, message: messageText } = message;
+
+                Promise.all([api.getUser(userId), api.getRoom(roomId)]).then((result) => {
+                    const [{ name: userName }, { name: roomName }] = result;
+
+                    createBrowserNotification(
+                        roomName,
+                        `${userName}: ${messageText}`,
+                    );
+                });
+            }
+        });
     }
 
     componentWillMount(){
