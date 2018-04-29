@@ -1,12 +1,12 @@
 const {createServer} = require('./src/server/server');
 
 const {
-    MONGO_USER = 'broken-code-gang',
+    MONGO_USER = 'pinkchat',
     MONGO_PASSWORD = '',
     MONGO_LOCAL = 'false',
-    MONGO_DATABSE = 'broken-code-gang',
-    MONGO_HOST = 'ds215739.mlab.com',
-    MONGO_PORT = 15739,
+    MONGO_DATABSE = 'pinkchat',
+    MONGO_HOST = 'ds261929.mlab.com',
+    MONGO_PORT = 61929,
     SERVER_HOST = 'localhost',
     SERVER_PORT = 3001
 } = process.env;
