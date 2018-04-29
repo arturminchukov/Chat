@@ -1,1 +1,1 @@
-web: npm run build & MONGO_PASSWORD="broken-code-gang-2018" node server.js
+web: npm run build & MONGO_PASSWORD="pinkchat" node server.js
