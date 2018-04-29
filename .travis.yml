@@ -10,5 +10,6 @@ deploy:
   provider: heroku
   app: pinkchat
   api_key: f18d16f9-4a8b-4c29-80a8-0b8ebce13592
+  strategy: git
   on:
     branch: master
