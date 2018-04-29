@@ -8,7 +8,9 @@
     font-family: sans-serif;
     background-color: #ffffff;
     box-shadow: none;
-    box-sizing: border-box
+    box-sizing: border-box;
+    position: fixed;
+    bottom:0;
 }
 
 .Footer_TextField {
