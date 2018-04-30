@@ -14,6 +14,7 @@ import { ConnectedAddUserToChatPage } from '../AddUserToChatPage/AddUserToChatPa
 import {routeNavigation} from '../../actions/route';
 import { addMessage } from '../../actions/messages';
 import { updateLastMessage } from '../../actions/rooms';
+import { StickersStore } from '../StickersStore/StickersStore';
 import createBrowserNotification from '../../helpers/createBrowserNotification';
 import api from '../../api';
 
@@ -46,6 +47,9 @@ const routeConfig = {
     },
     'add_new_user_to_chat_page':{
         view: ConnectedAddUserToChatPage,
+    },
+    'stickers_store':{
+        view: StickersStore,
     }
 };
 

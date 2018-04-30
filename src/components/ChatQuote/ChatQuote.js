@@ -9,7 +9,7 @@ export class ChatQuote extends React.Component {
         super(props);
         this.state = {
             authorName: null
-        }
+        };
     }
 
     render() {

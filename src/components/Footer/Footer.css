@@ -25,9 +25,11 @@
     resize: none;
     height: 32px;
     padding: 5px;
-    color: #333;
+    color: #ffffff;
+    background: inherit;
     padding-left: 10px;
     border-radius: 12px 0 0 12px;
+    border:0;
     box-sizing: border-box;
 }
 
@@ -36,7 +38,7 @@
 }
 
 .Footer__TextArea::placeholder {
-    color: #333;
+    color: #ffffff;
 }
 
 .Footer__SubmitButton{
@@ -65,7 +67,6 @@
 
 .Footer__Button{
     border: none;
-    border: 1px solid #fff;
     margin: 5px;
     background-color: #F13564;
     border-radius: 50%;

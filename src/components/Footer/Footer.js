@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import sendMessage from '../../actions/sendMessage';
+import {Button} from '../Button/Button';
 import './Footer.css';
+import { routeNavigation } from '../../actions/route';
 
 const stateToProps = state => ({
     payload: state.route.payload
@@ -17,14 +19,22 @@ export class Footer extends Component {
 
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
+        this.onClick = this.openStickers.bind(this);
+    }
+
+    openStickers(){
+        console.log('openStickers');
+        this.props.dispatch(routeNavigation({
+            page: 'stickers_store',
+            payload: {
+                prevPage: 'chat_page',
+                prevPrevPage: this.props.payload.prevPage,
+            }
+        }))
     }
 
     handleChange(e) {
         this.setState({ messageText: e.target.value });
-    }
-
-    handleEmodgy(){
-
     }
 
     handleSubmit = () => {
@@ -39,6 +49,7 @@ export class Footer extends Component {
     render() {
         return (
           <footer className="Footer Footer_TextField">
+              <Button type='stickers' circle={true} active={true} modifier='s' onClick={this.onClick}/>
               <textarea
                     className="Footer__TextArea"
                     onChange={this.handleChange}

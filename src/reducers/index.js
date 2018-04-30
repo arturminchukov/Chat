@@ -4,6 +4,7 @@ import messages from './messages';
 import rooms from './rooms';
 import users from './users';
 import user from './user';
+import pictures from './pictures';
 
 export default combineReducers({
     rooms,
@@ -11,4 +12,5 @@ export default combineReducers({
     route,
     users,
     user,
+    pictures,
 });

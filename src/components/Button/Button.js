@@ -13,6 +13,7 @@ import './Button.css';
  * chat - иконка чата
  * settings - иконка настроек
  * search  - иконка поиска
+ * stickers - стикеры
  *
  * modifier - аттрибук меняющий размер иконки
  * s - 30x30

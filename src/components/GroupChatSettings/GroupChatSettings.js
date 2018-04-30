@@ -25,10 +25,6 @@ export const GroupChatSettings = connect(stateToProps)(
         return (
             <div className="GroupChatSettings">
                 <section className="GroupChatSettings__section">
-                    {/* <h3 className="GroupChatSettings__title">{groupName}</h3>
-                     <div className="GroupChatSettings__add-wrapper">
-                     <Button type="add-user" active modifier="m" circle className="GroupChatSettings__add" />
-                     </div>*/}
                     <div className="">
                         <ConnectedHeader contentTitle={groupName} contentDesc="" buttonBack buttonSearch={false}
                                          buttonSettings={false} contentType="chat"/>
