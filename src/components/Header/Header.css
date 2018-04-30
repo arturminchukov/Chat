@@ -36,7 +36,7 @@
 .Header__search_input {
     border: none;
     border-radius: 80px;
-    box-shadow: 0 10px 20px 0 rgba(0,0,0,0.1);
+    box-shadow: 0 10px 20px 0 rgba(0, 0, 0, 0.1);
     padding: 0.5rem 0.3rem;
     min-width: 200px;
 }

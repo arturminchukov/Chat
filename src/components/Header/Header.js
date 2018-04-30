@@ -15,8 +15,10 @@ export default class Header extends Component {
         super(props);
         this.state = {
             search: false,
+            select: 'gifs',
         };
     }
+
     goBack() {
         const payload = this.props.payload;
         if (!payload || !payload.prevPage || payload.prevPage === 'authorization') {
@@ -39,7 +41,7 @@ export default class Header extends Component {
         });
     }
 
-    openChatSettings(){
+    openChatSettings() {
         this.props.openChatSettings();
     }
 
@@ -66,55 +68,65 @@ export default class Header extends Component {
         } = this.props;
         const btnFillerStyle = { width: '30px', height: '30px' };
         const btnFiller = <div style={btnFillerStyle}>&nbsp;</div>;
-        const leftControl = buttonBack ? <Button type="back" active modifier="s" circle onClick={this.goBack.bind(this)} >''</Button> : btnFiller;
-        let rightControl = btnFiller;
+        const leftControl = buttonBack ?
+            <Button type="back" active modifier="s" circle onClick={this.goBack.bind(this)}>''</Button> : btnFiller;
+        let rightControl = btnFiller,
+            changeSelectView;
+
         if (buttonSearch) {
-            rightControl = <Button type="search" active modifier="s" circle onClick={this.startSearch.bind(this)} />;
+            rightControl = <Button type="search" active modifier="s" circle onClick={this.startSearch.bind(this)}/>;
         } else if (buttonSettings) {
-            rightControl = <Button type="settings" active modifier="s" circle onClick={this.openChatSettings.bind(this)}/>;
+            rightControl =
+                <Button type="settings" active modifier="s" circle onClick={this.openChatSettings.bind(this)}/>;
         }
+
         let contentTitle = '';
         let contentDesc = '';
         switch (contentType) {
-        case 'chats':
-            contentTitle = 'BCG';
-            break;
-        case 'add-room':
-            contentTitle = 'Создать kомнату';
-            break;
-        case 'contacts':
-            contentTitle = 'Contacts';
-            break;
-        case 'add-user':
-            contentTitle = 'Select contact';
-            break;
-        case 'settings':
-            contentTitle = 'Settings';
-            break;
-        case 'chat':
-            contentTitle = this.props.contentTitle || 'Chat';
-            contentDesc = this.props.contentDesc || '';
-            break;
-        default:
-            contentTitle = 'BCG';
-            break;
+            case 'chats':
+                contentTitle = 'BCG';
+                break;
+            case 'add-room':
+                contentTitle = 'Создать kомнату';
+                break;
+            case 'contacts':
+                contentTitle = 'Contacts';
+                break;
+            case 'add-user':
+                contentTitle = 'Select contact';
+                break;
+            case 'settings':
+                contentTitle = 'Settings';
+                break;
+            case 'chat':
+                contentTitle = this.props.contentTitle || 'Chat';
+                contentDesc = this.props.contentDesc || '';
+                break;
+            case 'store':
+                contentTitle = '';
+                break;
+            default:
+                contentTitle = 'BCG';
+                break;
         }
 
         let headerContent = '';
         if (this.state.search || this.props.searchIsOn) {
             headerContent = (<div className="Header__search_wrapper">
-                <Button type="back" active modifier="s" circle onClick={this.cancelSearch.bind(this)} />
-                <input autoFocus type="text" className="Header__search_input" onChange={this.handleSearch.bind(this)} value={this.props.searchIsOn} />
-                <Button type="delete" active modifier="s" circle onClick={this.resetSearch.bind(this)} />
-                             </div>);
+                <Button type="back" active modifier="s" circle onClick={this.cancelSearch.bind(this)}/>
+                <input autoFocus type="text" className="Header__search_input" onChange={this.handleSearch.bind(this)}
+                       value={this.props.searchIsOn}/>
+                <Button type="delete" active modifier="s" circle onClick={this.resetSearch.bind(this)}/>
+            </div>);
         } else {
-            headerContent = <HeaderCenterItems title={contentTitle} desc={contentDesc} />;
+            headerContent = <HeaderCenterItems title={contentTitle} desc={contentDesc}/>;
         }
 
 
         return (
             <header className="Header">
                 {leftControl}
+                {changeSelectView}
                 {headerContent}
                 {rightControl}
             </header>

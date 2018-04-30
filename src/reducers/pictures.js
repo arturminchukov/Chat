@@ -9,6 +9,7 @@ const pictures = (state, action) => {
             preview_mode: false,
             preview_image: null,
             number: 0,
+            select: 'gifs',
         };
 
     switch (action.type) {
@@ -23,6 +24,14 @@ const pictures = (state, action) => {
                 pictures: state.pictures.concat(action.pictures),
                 next: action.next + state.next,
                 number: state.number + action.number,
+            };
+        case 'PICTURES_RELOAD':
+            return {
+                ...state,
+                pictures: action.pictures,
+                next: action.next,
+                number: action.number,
+                select: action.select,
             };
         case 'PICTURES_LOAD_ERROR':
             return {

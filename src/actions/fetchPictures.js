@@ -1,7 +1,8 @@
-const URL = 'https://api.giphy.com/v1/gifs/search?api_key=WGzC0bAlkaa4t2YGPIZVnvXfCL5ECfS4&q=cars';
-const API_KEY = 'WGzC0bAlkaa4t2YGPIZVnvXfCL5ECfS4';
+const URL = 'https://api.giphy.com/v1/';
+const API_KEY = '/search?api_key=WGzC0bAlkaa4t2YGPIZVnvXfCL5ECfS4';
+const API_KEY2 = '/search?api_key=Cq1WMQ20gc6Yc04dRuxEwDmCSkMukxCD';
 
-export default function fetchPictures() {
+export default function fetchPictures(newSelect,query) {
     return async function (dispatch, getState) {
         dispatch({
             type: 'PICTURES_LOADING',
@@ -10,20 +11,35 @@ export default function fetchPictures() {
 
         try {
             const state = getState(),
-                quantity = getQuantity();
+                quantity = getQuantity(),
+                select = newSelect ? newSelect : state.pictures.select,
+                searchQuery = query ? query : 'hello';
             console.log(state);
+            debugger;
             let response;
-            response = await fetch(`${URL}api_key=${API_KEY}&q=abstract&limit=${quantity}&offset=${state.pictures.next}&rating=G&lang=en&format=json`,
+            response = await fetch(`${URL}${select}${API_KEY2}&q=${searchQuery}&limit=${quantity}&offset=${state.pictures.next}&rating=G&lang=en&format=json`,
                 { credentials: 'same-origin' });
             const json = await response.json(),
                 pictures = json && json.data,
                 next = json && json.pagination && json.pagination.count;
-            dispatch({
-                type: 'PICTURES_LOADED',
-                pictures,
-                next,
-                number: pictures.length,
-            });
+
+            if((state.pictures.select===newSelect || !newSelect) && !query) {
+                dispatch({
+                    type: 'PICTURES_LOADED',
+                    pictures,
+                    next,
+                    number: pictures.length,
+                });
+            }
+            else{
+                dispatch({
+                    type: 'PICTURES_RELOAD',
+                    pictures,
+                    next,
+                    number: pictures.length,
+                    select:newSelect,
+                });
+            }
         } catch (error) {
             dispatch({
                 type: 'PICTURES_LOAD_ERROR',

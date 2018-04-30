@@ -15,7 +15,7 @@ export class Picture extends React.Component {
             );
 
         if (this.props.type === 'preview') {
-            const { width, height, url } = this.props.picture.images['original'],
+            const { width, height, url } = this.props.picture.images['preview_gif'],
                 screenWidth = (window && window.visualViewport && window.visualViewport.width) ||
                     (window && window.screen && window.screen.width),
                 screenHeight = (window && window.visualViewport && window.visualViewport.height) ||

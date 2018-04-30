@@ -7,12 +7,13 @@ import { InfiniteScroll } from '../InfiniteScroll/InfiniteScroll';
 
 const stateToProps = state => ({
     pictures: state.pictures.pictures,
+    select: state.pictures.select,
     next: state.pictures.next,
     preview_mode: state.pictures.preview_mode,
     preview: state.preview,
 });
 
-const BORDER = 10;
+const BORDER = 5;
 
 
 export default class Pictures extends React.Component {
@@ -65,13 +66,13 @@ export default class Pictures extends React.Component {
 
     getQuantityElementInRow() {
         const width = this.getWindowWidth();
-        if (width > 4000)
+        if (width > 1000)
             return 6;
-        else if (width > 2000)
+        else if (width > 768)
             return 5;
-        else if (width > 1000)
+        else if (width > 500)
             return 4;
-        else if (width >= 768)
+        else if (width >= 200)
             return 3;
         else
             return 1;
@@ -90,15 +91,15 @@ export default class Pictures extends React.Component {
             const row = pictures.slice(i, i + quantity);
             let ratioSum = 0;
             row.forEach((picture) => {
-                let image = picture && picture.images && picture.images['original'];
+                let image = picture && picture.images && picture.images['preview_gif'];
                 image.ratio = image.width / image.height;
                 ratioSum += image.ratio;
             });
             const height = Math.floor((windowWidth - borderSummaryWidth) / ratioSum);
             row.forEach(picture => {
-                const image = picture && picture.images && picture.images['original'],
+                const image = picture && picture.images && picture.images['preview_gif'],
                     width = Math.round(height * image.ratio),
-                    view = <Picture width={width} height={height} src={image.url} type='collection' key={picture.id} id={count++}/>;
+                    view = <Picture width={width} height={height} src={image.url} type='collection' key={count} id={count++}/>;
                 picturesView.push(view);
             });
         }
