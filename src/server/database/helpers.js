@@ -75,7 +75,6 @@ async function insertOrUpdateEntity(collection, data) {
             data,
         );
 
-        console.log(result);
     } else {
         const result = await collection.insertOne(data);
         data._id = result.insertedId;

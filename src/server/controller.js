@@ -189,7 +189,53 @@ module.exports = function (db, io) {
         requestResponse(TYPES.CURRENT_USER_ROOMS, async (params) => {
             const currentUser = await CurrentUser();
 
-            return getUserRooms(db, currentUser._id, params);
+            let rooms = (await getUserRooms(db, currentUser._id, params)),
+                items = rooms.items;
+            rooms.items[0].lastMessage = 'lastmessage';
+            for (let item of rooms.items) {
+                joinToRoomChannel(item._id);
+            }
+            return await Promise.all(items.map((item => {
+                return getMessages(db, {
+                    roomId: item._id, limit: 1
+                });
+            })))
+
+                .then((lastMessages => {
+                    lastMessages.forEach(lastMessage => {
+                        if(lastMessage.items[0]) {
+                            for (let i = 0; i < rooms.items.length; i++) {
+                                if ((lastMessage.items[0].roomId.toString() === rooms.items[i]._id.toString())) {
+                                    rooms.items[i].lastMessage = lastMessage.items[0];
+                                    break;
+                                }
+                            }
+                        }
+                    });
+                    return Promise.all(lastMessages.map((lastMessage) => {
+                        if(lastMessage && lastMessage.items && lastMessage.items[0])
+                            return getUsers(db, { _id: lastMessage.items[0].userId, limit: 1 });
+                        else
+                            return null;
+                    }))
+                }))
+
+                .then((users) => {
+                    users.forEach(user => {
+                        for (let i = 0; i < rooms.items.length; i++) {
+                            console.log("!!!!",rooms.items[i].lastMessage.userId);
+                            if (rooms.items[i].lastMessage && (user.items[0]._id.toString() === rooms.items[i].lastMessage.userId.toString())) {
+                                rooms.items[i].lastMessage.userName = user.items[0].name;
+                                break;
+                            }
+                        }
+                    });
+                    return rooms;
+                })
+                .catch((error) => {
+                        Promise.reject(error);
+                    }
+                );
         });
 
         // Join current user to room
