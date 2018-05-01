@@ -5,7 +5,6 @@ import { connect } from 'react-redux';
 import './StickersStore.css';
 import fetchPictures from '../../actions/fetchPictures';
 
-
 const stateToProps = state => ({
 });
 
@@ -45,7 +44,7 @@ export class StickerStore extends React.Component{
             this.setState({
                 select: newSelect,
             });
-            this.props.dispatch(fetchPictures(newSelect));
+            this.props.dispatch(fetchPictures(newSelect,this.state.searchTerm));
         }
     }
 
@@ -53,12 +52,14 @@ export class StickerStore extends React.Component{
         const gifsClass = this.state.select==='gifs'?'StickersStore__ChangeSelect_active':'';
         const stickersClass = this.state.select==='stickers'?'StickersStore__ChangeSelect_active':'';
         return (<div>
-            <section className="GroupChatSettings__section">
+            <section className='StickerStore__header'>
                 <ConnectedHeader buttonBack={true} changeSelect={true} buttonSearch searchIsOn={this.state.searchTerm}
                                  resetSearch={this.resetSearch}
                                  handleSearch={this.handleSearch} buttonSettings={false} contentType='store'/>
             </section>
-            <ConnectedPictures/>
+            <section className='StickerStore_pictures'>
+                <ConnectedPictures/>
+            </section>
             <section className='StickersStore__footer'>
                 <button onClick={this.changeSelect} className={'StickersStore__ChangeSelect ' +gifsClass}>gifs</button>
                 <button onClick={this.changeSelect} className={'StickersStore__ChangeSelect '+stickersClass}>stickers</button>

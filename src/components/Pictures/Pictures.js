@@ -4,6 +4,8 @@ import { Picture } from '../Picture/Picture';
 import './Pictures.css';
 import fetchPictures from '../../actions/fetchPictures';
 import { InfiniteScroll } from '../InfiniteScroll/InfiniteScroll';
+import sendMessage from '../../actions/sendMessage';
+import { routeNavigation } from '../../actions/route';
 
 const stateToProps = state => ({
     pictures: state.pictures.pictures,
@@ -11,6 +13,7 @@ const stateToProps = state => ({
     next: state.pictures.next,
     preview_mode: state.pictures.preview_mode,
     preview: state.preview,
+    roomId: state.route.payload.currentRoom,
 });
 
 const BORDER = 5;
@@ -51,13 +54,17 @@ export default class Pictures extends React.Component {
         this.resize = false;
     }
 
-    onClick(picture) {
+    async onClick(picture) {
         if (!picture.target.id)
             return;
-        this.props.dispatch({
-            type: 'PREVIEW_SHOW',
-            picture_id: parseInt(picture.target.id, 10),
-        })
+        picture = this.props.pictures[picture.target.id].images.original.url;
+        await this.props.dispatch(sendMessage(this.props.roomId, picture));
+        this.props.dispatch(routeNavigation({
+            page:'chat_page',
+            payload:{
+                prevPage:'chat_list',
+            }
+        }))
     }
 
     getWindowWidth() {
@@ -107,13 +114,14 @@ export default class Pictures extends React.Component {
     }
 
     render() {
-        const PicturesViews = this.placePictures(this.props.pictures);
-        if (this.state.loading)
-            return <div><h1>Loading</h1></div>;
+        const picturesViews = this.placePictures(this.props.pictures);
+        console.log('pictures',picturesViews);
+        if (this.props.pictures===0)
+            return <div><h1>Not found</h1></div>;
 
         return (
             <InfiniteScroll fetchNext={this.fetchNext} next={this.props.next} scrollDirection='down'>
-                <div className='Pictures'>{PicturesViews.map((picture) => {
+                <div className='Pictures'>{picturesViews.map((picture) => {
                     return picture;
                 })}
                 </div>

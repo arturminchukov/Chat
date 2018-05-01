@@ -14,9 +14,8 @@ export default function fetchPictures(newSelect,query) {
                 quantity = getQuantity(),
                 select = newSelect ? newSelect : state.pictures.select,
                 searchQuery = query ? query : 'hello';
-            console.log(state);
-            debugger;
             let response;
+            console.log('state',state);
             response = await fetch(`${URL}${select}${API_KEY2}&q=${searchQuery}&limit=${quantity}&offset=${state.pictures.next}&rating=G&lang=en&format=json`,
                 { credentials: 'same-origin' });
             const json = await response.json(),
@@ -57,10 +56,10 @@ export default function fetchPictures(newSelect,query) {
 function getQuantity() {
     const width = window && window.screen && window.screen.width;
     if (width > 5000)
-        return 40;
+        return 70;
     else if (width > 3000)
-        return 30;
-    else if (width > 2000)
-        return 20;
-    return 10;
+        return 50;
+    else if (width > 1000)
+        return 40;
+    return 24;
 }

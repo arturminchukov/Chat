@@ -91,7 +91,6 @@ class App extends Component {
     }
 
     componentWillMount(){
-        console.log(this.props);
         this.loadApp()
         .catch ((e)=>{
             console.log(e);
