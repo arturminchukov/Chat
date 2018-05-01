@@ -2,6 +2,7 @@ import React from 'react';
 import formatMessage from '../../helpers/formatMessage';
 import formatSmiles from '../../helpers/formatSmiles';
 import formatLinks from '../../helpers/formatLinks';
+import createDateStampChat from '../../helpers/createDateStampChat';
 import './ChatQuote.css';
 
 export class ChatQuote extends React.Component {
@@ -20,6 +21,7 @@ export class ChatQuote extends React.Component {
             date = new Date();
 
         date.setTime(created_at);
+        const timestampView = createDateStampChat(date);
 
         if (userId !== authorId) {
             chatDirection = 'ChatQuote_left';
@@ -42,8 +44,6 @@ export class ChatQuote extends React.Component {
         const messageImages = imagesUrls.map((url)=>{
             return <img className="ChatQuote__extra__img" src={url} alt="" />;
         });
-
-
         return (
             <div className={`ChatQuote ${chatDirection}`}>
                 {user}
@@ -67,7 +67,7 @@ export class ChatQuote extends React.Component {
                         })}
                 </p>
                 <div className="ChatQuote__extra">{messageImages}</div>
-                <p className="ChatQuote__timestamp">{date.toLocaleString()}</p>
+                <p className="ChatQuote__timestamp">{timestampView}</p>
             </div>
         );
     }

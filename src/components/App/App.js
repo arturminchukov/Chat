@@ -98,7 +98,6 @@ class App extends Component {
             
         
             .then((user) => {
-                console.log(user);
                if (user){
                 this.props.dispatch(routeNavigation({
                     page: 'chat_list',

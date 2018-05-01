@@ -68,7 +68,10 @@ export default class Pictures extends React.Component {
     }
 
     getWindowWidth() {
-        return Math.floor(window.visualViewport.width);
+        if (window.visualViewport && window.visualViewport.width)
+            return Math.floor(window.visualViewport.width);
+        else if (window.screen.width)
+            return Math.floor(window.screen.width);
     }
 
     getQuantityElementInRow() {
@@ -115,7 +118,6 @@ export default class Pictures extends React.Component {
 
     render() {
         const picturesViews = this.placePictures(this.props.pictures);
-        console.log('pictures',picturesViews);
         if (this.props.pictures===0)
             return <div><h1>Not found</h1></div>;
 

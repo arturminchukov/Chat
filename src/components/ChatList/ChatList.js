@@ -5,7 +5,7 @@ import { InfiniteRooms } from '../InfiniteRooms/InfiniteRooms';
 import { connect } from 'react-redux';
 import { routeNavigation } from '../../actions/route';
 import api from '../../api';
-import { createDateStamp } from '../../helpers/createDateStamp';
+import  createDateStamp  from '../../helpers/createDateStamp';
 
 const stateToProps = state => ({
     payload: state.route.payload,

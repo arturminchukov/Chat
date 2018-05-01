@@ -15,7 +15,6 @@ export default function fetchPictures(newSelect,query) {
                 select = newSelect ? newSelect : state.pictures.select,
                 searchQuery = query ? query : 'hello';
             let response;
-            console.log('state',state);
             response = await fetch(`${URL}${select}${API_KEY2}&q=${searchQuery}&limit=${quantity}&offset=${state.pictures.next}&rating=G&lang=en&format=json`,
                 { credentials: 'same-origin' });
             const json = await response.json(),
