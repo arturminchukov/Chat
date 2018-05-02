@@ -2,7 +2,6 @@ export default function createDateStampChat(date) {
     const secDiff = (new Date() - date) / 1000,
         DAY = 60 * 60 * 24,
         HOUR = 60 * 60;
-    debugger;
     if (secDiff < HOUR) {
         return Math.ceil(secDiff/60)+' minutes ago';
     }

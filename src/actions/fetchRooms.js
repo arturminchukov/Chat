@@ -5,8 +5,6 @@ export default function fetchRooms() {
     return async function (dispatch, getState) {
         try {
             const room = await api.getCurrentUserRooms(getState().rooms.next);
-            console.log(getState().user.curUserInfo);
-            debugger;
             const { items, next } = room;
             const end = !!(next);
 

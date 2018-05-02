@@ -49,8 +49,12 @@
     color: #46454C;
 }
 
+.ChatQuote_right .ChatQuote__timestamp {
+    color: #dfd7e0;
+}
+
 .ChatQuote_left .ChatQuote__timestamp {
-    color: #F13564;
+    color: #e67081;
 }
 
 .ChatQuote__text__smile {

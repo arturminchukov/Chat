@@ -14,6 +14,7 @@ export default function user(state, action) {
     case 'USER_GET_INFO':
         return {
             ...state,
+            _id: action.curUserInfo._id,
             curUserInfo: action.curUserInfo,
         };
     case 'USER_SIGN_OUT':

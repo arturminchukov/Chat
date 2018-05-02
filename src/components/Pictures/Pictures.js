@@ -120,7 +120,6 @@ export default class Pictures extends React.Component {
         const picturesViews = this.placePictures(this.props.pictures);
         if (this.props.pictures===0)
             return <div><h1>Not found</h1></div>;
-
         return (
             <InfiniteScroll fetchNext={this.fetchNext} next={this.props.next} scrollDirection='down'>
                 <div className='Pictures'>{picturesViews.map((picture) => {

@@ -1,5 +1,9 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import {routeNavigation} from '../../actions/route';
+import { addMessage } from '../../actions/messages';
+import { updateLastMessage } from '../../actions/rooms';
+import { getCurUserInfo } from '../../actions/getCurUserInfo';
 
 import './App.css';
 import { AuthorizationPage } from '../AuthorizationPage/AuthorizationPage';
@@ -11,9 +15,6 @@ import { ConnectedContactsListPage } from '../ContactsListPage/ContactsListPage'
 import { GroupChatSettings } from '../GroupChatSettings/GroupChatSettings';
 import { ConnectedUserList } from '../UserList/UserList';
 import { ConnectedAddUserToChatPage } from '../AddUserToChatPage/AddUserToChatPage';
-import {routeNavigation} from '../../actions/route';
-import { addMessage } from '../../actions/messages';
-import { updateLastMessage } from '../../actions/rooms';
 import { ConnectedStickerStore } from '../StickersStore/StickersStore';
 import createBrowserNotification from '../../helpers/createBrowserNotification';
 import api from '../../api';
@@ -90,31 +91,29 @@ class App extends Component {
         });
     }
 
-    componentWillMount(){
+    componentWillMount() {
         this.loadApp()
-        .catch ((e)=>{
-            console.log(e);
-        })
-            
-        
             .then((user) => {
-               if (user){
-                this.props.dispatch(routeNavigation({
-                    page: 'chat_list',
-                    payload: {
-                        footerNav: {
-                            active: 'chat'
+                if (user) {
+                    this.props.dispatch(getCurUserInfo(user));
+                    this.props.dispatch(routeNavigation({
+                        page: 'chat_list',
+                        payload: {
+                            footerNav: {
+                                active: 'chat'
+                            }
                         }
-                    }
-                }));
-               }
-               else {
-                this.props.dispatch(routeNavigation({
-                    page: 'authorization',
-                    payload: {
-                    }
-                }));
-               }
+                    }));
+                }
+                else {
+                    this.props.dispatch(routeNavigation({
+                        page: 'authorization',
+                        payload: {}
+                    }));
+                }
+            })
+            .catch((e) => {
+                console.log(e);
             });
     }
 

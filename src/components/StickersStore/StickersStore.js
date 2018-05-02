@@ -6,6 +6,7 @@ import './StickersStore.css';
 import fetchPictures from '../../actions/fetchPictures';
 
 const stateToProps = state => ({
+    select: state.pictures.select
 });
 
 export class StickerStore extends React.Component{
@@ -13,23 +14,31 @@ export class StickerStore extends React.Component{
     constructor(props){
       	super(props);
       	this.state = {
-      	    select:'gifs',
+      	    select: this.props.select,
             searchTerm:'',
       	};
         this.resetSearch = this.resetSearch.bind(this);
         this.handleSearch = this.handleSearch.bind(this);
         this.changeSelect = this.changeSelect.bind(this);
+        this.timer=0;
     }
 
 
     handleSearch(event){
-        const searchQuery = event.target.value.toLowerCase();
+        if(this.timer)
+            clearTimeout(this.timer);
 
+        const searchQuery = event.target.value.toLowerCase();
         this.setState({
             searchTerm: searchQuery,
         });
-        this.props.dispatch(fetchPictures(this.state.select,searchQuery));
+        const fetch = this.props.dispatch,
+            select = this.state.select;
+        this.timer = setTimeout(()=>
+            fetch(fetchPictures(select,searchQuery))
+        ,500);
     }
+
 
     resetSearch(){
         this.setState({
@@ -39,7 +48,6 @@ export class StickerStore extends React.Component{
 
     changeSelect(element){
         let newSelect = element.currentTarget.innerText;
-        console.log('change selector ',element);
         if(newSelect!== this.state.select) {
             this.setState({
                 select: newSelect,
@@ -68,5 +76,6 @@ export class StickerStore extends React.Component{
         ;
     }
 }
+
 
 export const ConnectedStickerStore = connect(stateToProps)(StickerStore);

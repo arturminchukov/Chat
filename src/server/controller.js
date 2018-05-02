@@ -135,7 +135,9 @@ module.exports = function (db, io) {
 
         // Receive current user information
         requestResponse(TYPES.CURRENT_USER, async () => {
-            return await CurrentUser();
+            let user = await CurrentUser();
+            delete user.password;
+            return user;
         });
 
         // Return list of all users with
@@ -223,7 +225,6 @@ module.exports = function (db, io) {
                 .then((users) => {
                     users.forEach(user => {
                         for (let i = 0; i < rooms.items.length; i++) {
-                            console.log("!!!!",rooms.items[i].lastMessage.userId);
                             if (rooms.items[i].lastMessage && (user.items[0]._id.toString() === rooms.items[i].lastMessage.userId.toString())) {
                                 rooms.items[i].lastMessage.userName = user.items[0].name;
                                 break;
@@ -307,7 +308,9 @@ module.exports = function (db, io) {
         });
 
         // Get messages
-        requestResponse(TYPES.MESSAGES, (payload) => getMessages(db, payload));
+        requestResponse(TYPES.MESSAGES, (payload) => {
+            return getMessages(db, payload)
+        });
 
 
         CurrentUser().then(async (user) => {

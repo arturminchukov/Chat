@@ -41,28 +41,31 @@ export class ChatQuote extends React.Component {
             }
         }
 
+        let count = 0;
+
         const messageImages = imagesUrls.map((url)=>{
-            return <img className="ChatQuote__extra__img" src={url} alt="" />;
+            return <img key={`${url}+${count++}`} className="ChatQuote__extra__img" src={url} alt="" />;
         });
+        
         return (
-            <div className={`ChatQuote ${chatDirection}`}>
+            <div className={`ChatQuote ${chatDirection}`} key={this.props.message._id}>
                 {user}
                 <p className="ChatQuote__text">
                     {editedMessageParts.map((token)=> {
                             switch (token.type){
                                 case 'smile':
-                                    return <img className="ChatQuote__text__smile" src={require(`../../assets/icons/${token.src}`)} alt="" />;
+                                    return <img key={`${token.src}+${count++}`} className="ChatQuote__text__smile" src={require(`../../assets/icons/${token.src}`)} alt="" />;
                                 case 'link':
-                                    return <a className="ChatQuote__text__link" href={token.src} target="_blank">{token.src + " "}</a>;
+                                    return <a key={`${token.src}+${count++}`} className="ChatQuote__text__link" href={token.src} target="_blank">{token.src + " "}</a>;
                                 case 'image':
                                     if (partsQuan === 1) {
-                                        return <img className="ChatQuote__text__img" src={token.src} alt="" />;
+                                        return <img key={`${token.src}+${count++}`} className="ChatQuote__text__img" src={token.src} alt="" />;
                                     } else {
-                                        return <a className="ChatQuote__text__link" href={token.src} target="_blank">{token.src + " "}</a>;
+                                        return <a key={`${token.src}+${count++}`} className="ChatQuote__text__link" href={token.src} target="_blank">{token.src + " "}</a>;
                                     }
 
                                 default:
-                                    return <span>{token.text + " "}</span>;
+                                    return <span key={`${token.src}+${count++}`}>{token.text + " "}</span>;
                             }
                         })}
                 </p>
