@@ -30,8 +30,7 @@ export const ChatListPage = connect(stateToProps)(class ChatListPage extends Rea
 
 
     componentDidMount() {
-        this.props.dispatch(
-            {
+        this.props.dispatch({
                 type: 'ROOMS_RESET',
             });
         this.fetch()

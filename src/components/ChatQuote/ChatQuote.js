@@ -46,7 +46,7 @@ export class ChatQuote extends React.Component {
         const messageImages = imagesUrls.map((url)=>{
             return <img key={`${url}+${count++}`} className="ChatQuote__extra__img" src={url} alt="" />;
         });
-        
+
         return (
             <div className={`ChatQuote ${chatDirection}`} key={this.props.message._id}>
                 {user}

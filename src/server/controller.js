@@ -309,7 +309,8 @@ module.exports = function (db, io) {
 
         // Get messages
         requestResponse(TYPES.MESSAGES, (payload) => {
-            return getMessages(db, payload)
+
+            return getMessages(db, payload);
         });
 
 

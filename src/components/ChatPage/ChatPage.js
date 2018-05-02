@@ -22,7 +22,7 @@ export class ChatPage extends Component {
     constructor(props) {
         super(props);
         this.state = {
-
+            chatInfo:this.props.payload.roomInfo,
         };
         this.fetchNext = this.props.dispatch.bind(this, fetchMessages(this.props.payload.currentRoom));
         this.lastMessage = null;
@@ -32,17 +32,6 @@ export class ChatPage extends Component {
         this.dispatch=this.props.dispatch.bind(this);
         this.openChatSettings = this.openChatSettings.bind(this);
     }
-
-    componentWillMount = () => {
-        this.getChatInfo(this.props.payload.currentRoom);
-    };
-
-    getChatInfo = async (chatId) => {
-        let chatInfo = await api.getRoom(chatId);
-        this.setState({
-            chatInfo: chatInfo
-        });
-    };
 
     async openChatSettings() {
         const room = await api.getRoom(this.props.payload.currentRoom);
@@ -64,10 +53,6 @@ export class ChatPage extends Component {
             this.lastMessage = this.props.messages.items[this.props.messages.items.length - 1];
             document.documentElement.scrollTop = document.documentElement.scrollHeight;
         }
-    }
-    
-    componentWillUnmount(){
-        // api.currentUserLeaveChannel(this.props.payload.currentRoom);
     }
 
     render() {

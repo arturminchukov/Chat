@@ -14,6 +14,11 @@ const stateToProps = state => ({
 
 export const ChatList = connect(stateToProps)(class ChatList extends React.Component {
     async enterRoom(roomId) {
+        let selectedRoom;
+        for(let room of this.props.rooms){
+            if(roomId===room._id.toString())
+                selectedRoom = {...room};
+        }
         const users = await api.getUsersOfRoom(roomId),
             usersName = {};
         users.items.forEach(user => {
@@ -25,6 +30,7 @@ export const ChatList = connect(stateToProps)(class ChatList extends React.Compo
                 /*...this.props.payload,*/
                 usersName: usersName,
                 currentRoom: roomId,
+                roomInfo: selectedRoom,
                 prevPage: 'chat_list',
             },
         }));

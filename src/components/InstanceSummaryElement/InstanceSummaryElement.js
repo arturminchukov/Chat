@@ -6,7 +6,7 @@ export class InstanceSummaryElement extends Component {
 
     handleClick = () => {
         this.props.onclick(this.props.summary.id);
-    }
+    };
 
     render() {
         if (!this.props) {
