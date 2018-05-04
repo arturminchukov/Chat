@@ -34,6 +34,29 @@ async function saveRoom(db, room) {
 
 /**
  * @param {Db} db
+ * @param {Room} roomId
+ * @param {User} userId
+ *
+ * @return {Promise<Room>}
+ */
+async function updateUserTime(db,userId, roomId) {
+    let room = await getRoom(db,roomId);
+
+    if(!room.lastTime)
+        room.lastTime = {};
+
+    if(!room.lastTime[userId])
+        room.lastTime[userId] = {};
+
+    if(!room.lastTime[userId].userId)
+        room.lastTime[userId].userId = userId;
+
+    room.lastTime[userId].time = Date.now();
+    return await insertOrUpdateEntity(db.collection(TABLE), room);
+}
+
+/**
+ * @param {Db} db
  * @param {{}} filter
  *
  * @return {Promise<Pagination<Room>>}
@@ -195,5 +218,6 @@ module.exports = {
     getRoom,
     joinRoom,
     leaveRoom,
-    dropRoom
+    dropRoom,
+    updateUserTime,
 };

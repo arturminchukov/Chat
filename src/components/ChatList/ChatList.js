@@ -46,16 +46,21 @@ export const ChatList = connect(stateToProps)(class ChatList extends React.Compo
                         author='',
                         description='',
                         timestamp='';
+
                     if (room && room.lastMessage && room.lastMessage.userName) {
                         date.setTime(room.lastMessage.created_at);
                         author = room.lastMessage.userName;
                         description = room.lastMessage.message;
                         timestamp = createDateStamp(date);
                     }
+
+                    let typeModifier;
+                    if(room && room.lastMessage)
+                        typeModifier = !room.lastMessage.readByUser;
+
                     if (roomName.split(' ').includes(this.props.curUserInfo.name)) {
                         roomName = roomName.replace(this.props.curUserInfo.name, '');
                     }
-
                     return (<InstanceSummaryElement
                         key={room._id}
                         summary={{
@@ -68,6 +73,7 @@ export const ChatList = connect(stateToProps)(class ChatList extends React.Compo
                             author: `${author}`,
                             description: `${description}`,
                             id: `${room._id}`,
+                            typeModifier: typeModifier,
                         }}
                         onclick={this.enterRoom.bind(this)}
                     />);

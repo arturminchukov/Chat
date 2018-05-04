@@ -1,6 +1,6 @@
 const { findUserBySid, getUsers, addUser, setCurrentUser, logoutUser } = require('./database/user');
 const {
-    joinRoom, leaveRoom, getRooms, getUserRooms, createRoom, getRoom, dropRoom
+    joinRoom, leaveRoom, getRooms, getUserRooms, createRoom, getRoom, dropRoom, updateUserTime
 } = require('./database/room');
 const { getMessages, sendMessage } = require('./database/messages');
 const TYPES = require('./messages');
@@ -28,7 +28,7 @@ module.exports = function (db, io) {
     io.on('connection', (socket) => {
         let { sid } = socket.request.cookies,
             isDisconnected = false;
-
+        let userInRoom ={status:false,roomId:null};
         socket.join('broadcast');
 
         /**
@@ -136,7 +136,8 @@ module.exports = function (db, io) {
         // Receive current user information
         requestResponse(TYPES.CURRENT_USER, async () => {
             let user = await CurrentUser();
-            delete user.password;
+            if(user)
+                delete user.password;
             return user;
         });
 
@@ -190,19 +191,22 @@ module.exports = function (db, io) {
         // Rooms of current user
         requestResponse(TYPES.CURRENT_USER_ROOMS, async (params) => {
             const currentUser = await CurrentUser();
-
+            if(userInRoom.status) {
+                await updateUserTime(db,currentUser._id, userInRoom.roomId);
+                userInRoom.status = false;
+                userInRoom.roomId = null;
+            }
             let rooms = (await getUserRooms(db, currentUser._id, params)),
                 items = rooms.items;
-            rooms.items[0].lastMessage = 'lastmessage';
             for (let item of rooms.items) {
                 joinToRoomChannel(item._id);
             }
+
             return await Promise.all(items.map((item => {
                 return getMessages(db, {
                     roomId: item._id, limit: 1
                 });
             })))
-
                 .then((lastMessages => {
                     lastMessages.forEach(lastMessage => {
                         if(lastMessage.items[0]) {
@@ -223,10 +227,17 @@ module.exports = function (db, io) {
                 }))
 
                 .then((users) => {
-                    users.forEach(user => {
-                        for (let i = 0; i < rooms.items.length; i++) {
-                            if (rooms.items[i].lastMessage && (user.items[0]._id.toString() === rooms.items[i].lastMessage.userId.toString())) {
-                                rooms.items[i].lastMessage.userName = user.items[0].name;
+                    rooms.items.forEach(room => {
+                        for (let i = 0; i < users.length; i++) {
+                            if (users[i].items && users[i].items.length && room.lastMessage && (users[i].items[0]._id.toString() === room.lastMessage.userId.toString())) {
+                                room.lastMessage.userName = users[i].items[0].name;
+                                if(room.lastTime && room.lastTime[currentUser._id]
+                                    && (
+                                        room.lastMessage.userId.toString() === currentUser._id.toString()
+                                        || room.lastMessage.created_at < room.lastTime[currentUser._id].time))
+                                    room.lastMessage.readByUser = true;
+                                else
+                                    room.lastMessage.readByUser = false;
                                 break;
                             }
                         }
@@ -296,6 +307,12 @@ module.exports = function (db, io) {
         // Send message
         requestResponse(TYPES.SEND_MESSAGE, async (payload) => {
             const currentUser = await CurrentUser();
+            /**
+             * Обновляем время если посылаем сообщение*/
+            if(userInRoom.status){
+                userInRoom.roomId=payload.roomId;
+                updateUserTime(db,currentUser._id,payload.roomId)
+            }
 
             const message = await sendMessage(db, {
                 ...payload,
@@ -309,7 +326,12 @@ module.exports = function (db, io) {
 
         // Get messages
         requestResponse(TYPES.MESSAGES, (payload) => {
-
+            CurrentUser()
+                .then(user =>{
+                    if(!userInRoom.status){
+                        userInRoom.status=true;
+                        userInRoom.roomId=payload.roomId;
+                        updateUserTime(db,user._id,userInRoom.roomId)}});
             return getMessages(db, payload);
         });
 
@@ -335,6 +357,10 @@ module.exports = function (db, io) {
         socket.on('disconnect', async () => {
             isDisconnected = true;
             const user = await CurrentUser();
+            if(userInRoom.status) {
+                userInRoom.status = false;
+                updateUserTime(db,user._id,userInRoom.roomId);
+            }
 
             ONLINE[user._id] = false;
 

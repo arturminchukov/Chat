@@ -2,6 +2,12 @@ import React, { Component } from 'react';
 import { Avatar } from '../Avatar/Avatar';
 import './InstanceSummaryElement.css';
 
+
+/**
+ * typeModifier:
+ * - true, малиновая тень
+ * - false, обычная тень
+*/
 export class InstanceSummaryElement extends Component {
 
     handleClick = () => {
@@ -15,11 +21,12 @@ export class InstanceSummaryElement extends Component {
 
         const { summary } = this.props;
         const {
-            title, description, author, descModifiers,timestamp
+            title, description, author, descModifiers,timestamp,typeModifier
         } = summary;
 
         let titleClasses = 'InstanceSummaryElement__title';
         let descClasses = 'InstanceSummaryElement__desc';
+        const unreadMessageClass = typeModifier?'InstanceSummaryElement__UnreadMessage':'';
 
         if (descModifiers && descModifiers === 'light') {
             titleClasses += ' InstanceSummaryElement__title_light';
@@ -57,7 +64,7 @@ export class InstanceSummaryElement extends Component {
 
 
         return (
-            <div className="InstanceSummaryElement" onClick={this.handleClick}>
+            <div className={`InstanceSummaryElement ${unreadMessageClass}`} onClick={this.handleClick}>
                 <div className="InstanceSummaryElement__avatar">
                     {avatar}
                 </div>

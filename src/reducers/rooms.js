@@ -34,7 +34,6 @@ export default function rooms(state, action) {
                 next: null,
             };
         case 'ROOMS_UPDATE_LAST_MESSAGE':
-            console.log(state);
             let newItems = [...state.items],
                 newState = {
                     ...state,
@@ -42,6 +41,7 @@ export default function rooms(state, action) {
             newItems.forEach((item) => {
                 if (item._id === (action && action.newMessage.roomId)) {
                     item.lastMessage = action.newMessage;
+                    item.lastMessage.readByUser = false;
                     newState.items =  newItems;
                 }
             });
