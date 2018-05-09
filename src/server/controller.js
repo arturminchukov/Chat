@@ -85,6 +85,26 @@ module.exports = function (db, io) {
         }
 
         /**
+         * Join to socket channel, to broadcast messages inside Room
+         *
+         * @param {string} userId
+         */
+        function userJoinToChannel(userId) {
+            socket.join(`id:${userId}`);
+        }
+
+
+        /**
+         * Broadcast messages inside Room about user joined
+         *
+         * @param {string} userId
+         * @param {object} room
+         */
+        function userJoinedToRoom({userId},room) {
+            socket.to(`id:${userId}`).emit(TYPES.USER_JOINED, room);
+        }
+
+        /**
          * Leave socket channel
          *
          * @param {string} roomId
@@ -100,23 +120,13 @@ module.exports = function (db, io) {
         requestResponse(TYPES.CURRENT_USER_LEAVE_CHANNEL, (roomId) => leaveRoomChannel(roomId));
 
         /**
-         * Broadcast messages inside Room about user joined
-         *
-         * @param {string} userId
-         * @param {string} roomId
-         */
-        function userWasJoinedToRoom({ userId, roomId }) {
-            socket.to(`room:${roomId}`).emit(TYPES.USER_JOINED, { userId, roomId });
-        }
-
-        /**
          * Broadcast messages inside Room about user leave
          *
          * @param {string} userId
          * @param {string} roomId
          */
-        function userLeaveRoom({ userId, roomId }) {
-            socket.to(`room:${roomId}`).emit(TYPES.USER_LEAVED, { userId, roomId });
+        function userLeaveRoom(userId, roomId) {
+            socket.to(`id:${userId}`).emit(TYPES.USER_LEAVED, roomId);
         }
 
         /**
@@ -136,8 +146,10 @@ module.exports = function (db, io) {
         // Receive current user information
         requestResponse(TYPES.CURRENT_USER, async () => {
             let user = await CurrentUser();
-            if(user)
+            if(user) {
                 delete user.password;
+                userJoinToChannel(user._id.toString());
+            }
             return user;
         });
 
@@ -227,22 +239,24 @@ module.exports = function (db, io) {
                 }))
 
                 .then((users) => {
-                    rooms.items.forEach(room => {
-                        for (let i = 0; i < users.length; i++) {
-                            if (users[i].items && users[i].items.length && room.lastMessage && (users[i].items[0]._id.toString() === room.lastMessage.userId.toString())) {
-                                room.lastMessage.userName = users[i].items[0].name;
-                                if(room.lastTime && room.lastTime[currentUser._id]
-                                    && (
+                    if (users) {
+                        rooms.items.forEach(room => {
+                            for (let i = 0; i < users.length; i++) {
+                                if (users[i] && users[i].items && users[i].items.length && room.lastMessage && (users[i].items[0]._id.toString() === room.lastMessage.userId.toString())) {
+                                    room.lastMessage.userName = users[i].items[0].name;
+                                    if (room && room.lastTime && room.lastTime[currentUser._id]
+                                        && (
                                         room.lastMessage.userId.toString() === currentUser._id.toString()
                                         || room.lastMessage.created_at < room.lastTime[currentUser._id].time))
-                                    room.lastMessage.readByUser = true;
-                                else
-                                    room.lastMessage.readByUser = false;
-                                break;
+                                        room.lastMessage.readByUser = true;
+                                    else
+                                        room.lastMessage.readByUser = false;
+                                    break;
+                                }
                             }
-                        }
-                    });
-                    return rooms;
+                        });
+                        return rooms;
+                    }
                 })
                 .catch((error) => {
                         Promise.reject(error);
@@ -252,6 +266,10 @@ module.exports = function (db, io) {
 
         // Join current user to room
         requestResponse(TYPES.DROP_ROOM, async (roomId) => {
+            const room = await getRoom(db,roomId);
+            if(room && room.users && room.users.length===1){
+                userLeaveRoom(room.users[0].toString(),roomId);
+            }
             return await dropRoom(db, roomId);
         });
 
@@ -264,15 +282,15 @@ module.exports = function (db, io) {
                 userId: currentUser._id,
             };
 
-            userWasJoinedToRoom(payload);
-
             return joinRoom(db, payload);
         });
 
         // Join user to room
-        requestResponse(TYPES.USER_JOIN_ROOM, (payload) => {
-            userWasJoinedToRoom(payload);
+        requestResponse(TYPES.USER_JOIN_ROOM, async (payload) => {
 
+            joinToRoomChannel();
+            const room  = await getRoom(db,payload.roomId);
+            userJoinedToRoom(payload,room);
             return joinRoom(db, payload);
         });
 
@@ -286,7 +304,6 @@ module.exports = function (db, io) {
             };
 
             leaveRoomChannel(roomId);
-            userLeaveRoom(payload);
 
             return leaveRoom(db, payload);
         });

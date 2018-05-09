@@ -42,6 +42,9 @@ async function saveRoom(db, room) {
 async function updateUserTime(db,userId, roomId) {
     let room = await getRoom(db,roomId);
 
+    if(!room)
+        return;
+
     if(!room.lastTime)
         room.lastTime = {};
 
@@ -183,11 +186,11 @@ async function dropRoom(db, roomId) {
  */
 async function leaveRoom(db, { roomId, userId }) {
     if (!roomId) {
-        throw new Error('You must specify roomId to join');
+        throw new Error('You must specify roomId to leave');
     }
 
     if (!userId) {
-        throw new Error('You must specify userId to join');
+        throw new Error('You must specify userId to leave');
     }
 
     let collection = db.collection(TABLE),

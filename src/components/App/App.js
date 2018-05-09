@@ -4,6 +4,8 @@ import {routeNavigation} from '../../actions/route';
 import { addMessage } from '../../actions/messages';
 import { updateLastMessage } from '../../actions/rooms';
 import { getCurUserInfo } from '../../actions/getCurUserInfo';
+import { userJoinedRoom } from '../../actions/userJoinedRoom';
+import { userLeaveRoom } from '../../actions/userLeaveRoom';
 
 import './App.css';
 import { AuthorizationPage } from '../AuthorizationPage/AuthorizationPage';
@@ -89,6 +91,10 @@ class App extends Component {
                 });
             }
         });
+
+        api.onUserJoinedRoom(room => this.props.dispatch(userJoinedRoom(room)));
+
+        api.onUserLeavedRoom((roomId)=>this.props.dispatch(userLeaveRoom(roomId)));
     }
 
     componentWillMount() {
