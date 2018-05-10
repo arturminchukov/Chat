@@ -10,6 +10,11 @@ module.exports = {
     SET_CURRENT_USER: 'SET_CURRENT_USER',
 
     /**
+     * Set current user avatar
+     */
+    SET_CURRENT_USER_AVATAR: 'SET_CURRENT_USER_AVATAR',
+
+    /**
      * Logout current user
      */
     LOGOUT_CURRENT_USER: 'LOGOUT_CURRENT_USER',

@@ -17,9 +17,9 @@ const { ObjectId } = require('mongodb');
  */
 async function pageableCollection(collection, {
     lastId, order, limit = 10, ...query
-} = {},selectModifier) {
+} = {}, selectModifier) {
     const count = await collection.find(query).count();
-    if(lastId && selectModifier){
+    if (lastId && selectModifier) {
         query._id = {
             [selectModifier]: ObjectId(lastId.toString())
         };
@@ -70,7 +70,7 @@ async function pageableCollection(collection, {
  */
 async function insertOrUpdateEntity(collection, data) {
     if (data._id) {
-        const result = await collection.findOneAndUpdate(
+        await collection.findOneAndUpdate(
             { _id: data._id },
             data,
         );

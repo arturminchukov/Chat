@@ -1,5 +1,5 @@
 const URL = 'https://api.giphy.com/v1/';
-const API_KEY = '/search?api_key=WGzC0bAlkaa4t2YGPIZVnvXfCL5ECfS4';
+// const API_KEY = '/search?api_key=WGzC0bAlkaa4t2YGPIZVnvXfCL5ECfS4';
 const API_KEY2 = '/search?api_key=Cq1WMQ20gc6Yc04dRuxEwDmCSkMukxCD';
 
 export default function fetchPictures(newSelect,query) {

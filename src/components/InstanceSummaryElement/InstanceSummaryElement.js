@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { Avatar } from '../Avatar/Avatar';
 import './InstanceSummaryElement.css';
+import createAvatar from '../../helpers/createAvatar';
 
 
 /**
@@ -19,11 +19,9 @@ export class InstanceSummaryElement extends Component {
             return null;
         }
 
-        const { summary } = this.props;
         const {
-            title, description, author, descModifiers,timestamp,typeModifier
-        } = summary;
-
+            title, description, author, descModifiers,timestamp,typeModifier,contact
+        } = this.props && this.props.summary;
         let titleClasses = 'InstanceSummaryElement__title';
         let descClasses = 'InstanceSummaryElement__desc';
         const unreadMessageClass = typeModifier?'InstanceSummaryElement__UnreadMessage':'';
@@ -35,15 +33,8 @@ export class InstanceSummaryElement extends Component {
             descClasses += ' InstanceSummaryElement__desc_dark';
         }
 
-        let destrTitle = title.split(' ');
-        let avaTitle = '';
-        if (destrTitle.length === 1){
-            avaTitle = title.substring(0, 2);
-        } else if (destrTitle.length > 1){
-            avaTitle = `${destrTitle[0].substring(0, 1)}${destrTitle[1].substring(0, 1)}`;
-        }
-
-        let avatar = avaTitle ? <div className="InstanceSummaryElement__avatar_acronim_wrapper"><span className="InstanceSummaryElement__avatar_acronim">{avaTitle}</span></div> : <Avatar image={this.props.avatar} />
+        let avatar = createAvatar(contact.avatar,contact,'s');
+       // let avatar = '';
 
         let descView = '';
         if (author) {

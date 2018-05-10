@@ -1,4 +1,4 @@
-const { findUserBySid, getUsers, addUser, setCurrentUser, logoutUser } = require('./database/user');
+const { findUserBySid, getUsers, addUser, setCurrentUser, logoutUser, updateUserAvatar } = require('./database/user');
 const {
     joinRoom, leaveRoom, getRooms, getUserRooms, createRoom, getRoom, dropRoom, updateUserTime
 } = require('./database/room');
@@ -28,7 +28,7 @@ module.exports = function (db, io) {
     io.on('connection', (socket) => {
         let { sid } = socket.request.cookies,
             isDisconnected = false;
-        let userInRoom ={status:false,roomId:null};
+        let userInRoom = { status: false, roomId: null };
         socket.join('broadcast');
 
         /**
@@ -100,7 +100,7 @@ module.exports = function (db, io) {
          * @param {string} userId
          * @param {object} room
          */
-        function userJoinedToRoom({userId},room) {
+        function userJoinedToRoom({ userId }, room) {
             socket.to(`id:${userId}`).emit(TYPES.USER_JOINED, room);
         }
 
@@ -129,6 +129,7 @@ module.exports = function (db, io) {
             socket.to(`id:${userId}`).emit(TYPES.USER_LEAVED, roomId);
         }
 
+
         /**
          * New message coming to room
          *
@@ -146,11 +147,18 @@ module.exports = function (db, io) {
         // Receive current user information
         requestResponse(TYPES.CURRENT_USER, async () => {
             let user = await CurrentUser();
-            if(user) {
+            if (user) {
                 delete user.password;
                 userJoinToChannel(user._id.toString());
             }
             return user;
+        });
+
+        // Set current user avatar
+        requestResponse(TYPES.SET_CURRENT_USER_AVATAR, async (newAvatar) => {
+            let user = await CurrentUser();
+            user.avatar = newAvatar;
+            return await updateUserAvatar(db, user);
         });
 
         // Return list of all users with
@@ -203,8 +211,8 @@ module.exports = function (db, io) {
         // Rooms of current user
         requestResponse(TYPES.CURRENT_USER_ROOMS, async (params) => {
             const currentUser = await CurrentUser();
-            if(userInRoom.status) {
-                await updateUserTime(db,currentUser._id, userInRoom.roomId);
+            if (userInRoom.status) {
+                await updateUserTime(db, currentUser._id, userInRoom.roomId);
                 userInRoom.status = false;
                 userInRoom.roomId = null;
             }
@@ -221,7 +229,7 @@ module.exports = function (db, io) {
             })))
                 .then((lastMessages => {
                     lastMessages.forEach(lastMessage => {
-                        if(lastMessage.items[0]) {
+                        if (lastMessage.items[0]) {
                             for (let i = 0; i < rooms.items.length; i++) {
                                 if ((lastMessage.items[0].roomId.toString() === rooms.items[i]._id.toString())) {
                                     rooms.items[i].lastMessage = lastMessage.items[0];
@@ -231,7 +239,7 @@ module.exports = function (db, io) {
                         }
                     });
                     return Promise.all(lastMessages.map((lastMessage) => {
-                        if(lastMessage && lastMessage.items && lastMessage.items[0])
+                        if (lastMessage && lastMessage.items && lastMessage.items[0])
                             return getUsers(db, { _id: lastMessage.items[0].userId, limit: 1 });
                         else
                             return null;
@@ -243,10 +251,9 @@ module.exports = function (db, io) {
                         rooms.items.forEach(room => {
                             for (let i = 0; i < users.length; i++) {
                                 if (users[i] && users[i].items && users[i].items.length && room.lastMessage && (users[i].items[0]._id.toString() === room.lastMessage.userId.toString())) {
-                                    room.lastMessage.userName = users[i].items[0].name;
+                                    room.lastMessage.user = users[i].items[0];
                                     if (room && room.lastTime && room.lastTime[currentUser._id]
-                                        && (
-                                        room.lastMessage.userId.toString() === currentUser._id.toString()
+                                        && (room.lastMessage.userId.toString() === currentUser._id.toString()
                                         || room.lastMessage.created_at < room.lastTime[currentUser._id].time))
                                         room.lastMessage.readByUser = true;
                                     else
@@ -266,9 +273,9 @@ module.exports = function (db, io) {
 
         // Join current user to room
         requestResponse(TYPES.DROP_ROOM, async (roomId) => {
-            const room = await getRoom(db,roomId);
-            if(room && room.users && room.users.length===1){
-                userLeaveRoom(room.users[0].toString(),roomId);
+            const room = await getRoom(db, roomId);
+            if (room && room.users && room.users.length === 1) {
+                userLeaveRoom(room.users[0].toString(), roomId);
             }
             return await dropRoom(db, roomId);
         });
@@ -289,8 +296,8 @@ module.exports = function (db, io) {
         requestResponse(TYPES.USER_JOIN_ROOM, async (payload) => {
 
             joinToRoomChannel();
-            const room  = await getRoom(db,payload.roomId);
-            userJoinedToRoom(payload,room);
+            const room = await getRoom(db, payload.roomId);
+            userJoinedToRoom(payload, room);
             return joinRoom(db, payload);
         });
 
@@ -326,9 +333,9 @@ module.exports = function (db, io) {
             const currentUser = await CurrentUser();
             /**
              * Обновляем время если посылаем сообщение*/
-            if(userInRoom.status){
-                userInRoom.roomId=payload.roomId;
-                updateUserTime(db,currentUser._id,payload.roomId)
+            if (userInRoom.status) {
+                userInRoom.roomId = payload.roomId;
+                updateUserTime(db, currentUser._id, payload.roomId)
             }
 
             const message = await sendMessage(db, {
@@ -344,17 +351,19 @@ module.exports = function (db, io) {
         // Get messages
         requestResponse(TYPES.MESSAGES, (payload) => {
             CurrentUser()
-                .then(user =>{
-                    if(!userInRoom.status){
-                        userInRoom.status=true;
-                        userInRoom.roomId=payload.roomId;
-                        updateUserTime(db,user._id,userInRoom.roomId)}});
+                .then(user => {
+                    if (!userInRoom.status) {
+                        userInRoom.status = true;
+                        userInRoom.roomId = payload.roomId;
+                        updateUserTime(db, user._id, userInRoom.roomId)
+                    }
+                });
             return getMessages(db, payload);
         });
 
 
         CurrentUser().then(async (user) => {
-            if (!user){
+            if (!user) {
                 return
             }
             if (!isDisconnected) {
@@ -374,9 +383,9 @@ module.exports = function (db, io) {
         socket.on('disconnect', async () => {
             isDisconnected = true;
             const user = await CurrentUser();
-            if(userInRoom.status) {
+            if (userInRoom.status) {
                 userInRoom.status = false;
-                updateUserTime(db,user._id,userInRoom.roomId);
+                updateUserTime(db, user._id, userInRoom.roomId);
             }
 
             ONLINE[user._id] = false;
