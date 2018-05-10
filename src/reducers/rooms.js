@@ -12,8 +12,14 @@ export default function rooms(state, action) {
         case 'ROOM_ADD':
             return {
                 ...state,
-                items: [...state.items, action.room],
+                items: [action.room,...state.items],
                 newRoom: action.room,
+            };
+        case 'ROOM_DELETED':
+            const newRooms = state.items.filter(room => room._id.toString()!== action.roomId.toString());
+            return {
+                ...state,
+                items: newRooms,
             };
         case 'ROOMS_FETCH':
             return {
@@ -34,7 +40,6 @@ export default function rooms(state, action) {
                 next: null,
             };
         case 'ROOMS_UPDATE_LAST_MESSAGE':
-            console.log(state);
             let newItems = [...state.items],
                 newState = {
                     ...state,
@@ -42,6 +47,7 @@ export default function rooms(state, action) {
             newItems.forEach((item) => {
                 if (item._id === (action && action.newMessage.roomId)) {
                     item.lastMessage = action.newMessage;
+                    item.lastMessage.readByUser = false;
                     newState.items =  newItems;
                 }
             });

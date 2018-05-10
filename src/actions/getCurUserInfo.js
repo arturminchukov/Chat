@@ -1,20 +1,13 @@
-import api from '../api';
+export const getCurUserInfo = (user) => {
+    return {
+        type: 'USER_GET_INFO',
+        curUserInfo: user,
+    }
+};
 
-export default function getCurUserInfo() {
-    return async function (dispatch, getState) {
-        try {
-            const user = await api.getCurrentUser();
-            dispatch({
-                type: 'USER_GET_INFO',
-                curUserInfo: user
-            });
-
-            return user;
-        } catch (error) {
-            dispatch({
-                type: 'USER_GET_INFO_ERROR',
-                error,
-            });
-        }
-    };
-}
+export const updateUserAvatar = (avatar) => {
+    return {
+        type: 'USER_UPDATE_AVATAR',
+        avatar: avatar,
+    }
+};

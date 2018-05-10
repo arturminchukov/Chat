@@ -1,5 +1,5 @@
 .ChatQuote {
-    min-width: 150px;
+    min-width: 100px;
     max-width: 700px;
     text-align: left;
     padding: 10px;
@@ -49,8 +49,12 @@
     color: #46454C;
 }
 
+.ChatQuote_right .ChatQuote__timestamp {
+    color: #dfd7e0;
+}
+
 .ChatQuote_left .ChatQuote__timestamp {
-    color: #F13564;
+    color: #e67081;
 }
 
 .ChatQuote__text__smile {
@@ -58,7 +62,6 @@
     height: 20px;
 }
 .ChatQuote__text__img {
-    width: 100px;
     height: 100px;
 }
 
@@ -69,6 +72,5 @@
     text-align: right;
 }
 .ChatQuote__extra__img {
-    width: 100px;
     height: 100px;
 }

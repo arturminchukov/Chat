@@ -1,6 +1,10 @@
-export default function createDateStamp(date) {
+export default function createDateStampChat(date) {
     const secDiff = (new Date() - date) / 1000,
-        DAY = 60 * 60 * 24;
+        DAY = 60 * 60 * 24,
+        HOUR = 60 * 60;
+    if (secDiff < HOUR) {
+        return Math.ceil(secDiff/60)+' minutes ago';
+    }
     if (secDiff < DAY) {
         const options = {
             hour: 'numeric',
@@ -10,9 +14,7 @@ export default function createDateStamp(date) {
         };
         return date.toLocaleTimeString('en-EN', options);
     }
-    if (secDiff >= DAY && secDiff < DAY * 2)
-        return 'yesterday';
-    if (secDiff >= DAY * 2 && date.getYear() === (new Date()).getYear()) {
+    if (secDiff >= DAY && date.getYear() === (new Date()).getYear()) {
         const options = {
             month: 'long',
             day: 'numeric',

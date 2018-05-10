@@ -8,8 +8,7 @@ export default function leaveRoom(roomId) {
             const room = await api.currentUserLeaveRoom(roomId);
 
             if (room.users.length > 0 && room.users.length < 2) {
-                let r = await api.dropRoom(roomId);
-                console.log(r);
+                api.dropRoom(roomId);
             }
 
             dispatch(routeNavigation({

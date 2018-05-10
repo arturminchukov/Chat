@@ -34,6 +34,32 @@ async function saveRoom(db, room) {
 
 /**
  * @param {Db} db
+ * @param {Room} roomId
+ * @param {User} userId
+ *
+ * @return {Promise<Room>}
+ */
+async function updateUserTime(db,userId, roomId) {
+    let room = await getRoom(db,roomId);
+
+    if(!room)
+        return;
+
+    if(!room.lastTime)
+        room.lastTime = {};
+
+    if(!room.lastTime[userId])
+        room.lastTime[userId] = {};
+
+    if(!room.lastTime[userId].userId)
+        room.lastTime[userId].userId = userId;
+
+    room.lastTime[userId].time = Date.now();
+    return await insertOrUpdateEntity(db.collection(TABLE), room);
+}
+
+/**
+ * @param {Db} db
  * @param {{}} filter
  *
  * @return {Promise<Pagination<Room>>}
@@ -160,11 +186,11 @@ async function dropRoom(db, roomId) {
  */
 async function leaveRoom(db, { roomId, userId }) {
     if (!roomId) {
-        throw new Error('You must specify roomId to join');
+        throw new Error('You must specify roomId to leave');
     }
 
     if (!userId) {
-        throw new Error('You must specify userId to join');
+        throw new Error('You must specify userId to leave');
     }
 
     let collection = db.collection(TABLE),
@@ -195,5 +221,6 @@ module.exports = {
     getRoom,
     joinRoom,
     leaveRoom,
-    dropRoom
+    dropRoom,
+    updateUserTime,
 };

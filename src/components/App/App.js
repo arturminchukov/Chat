@@ -1,5 +1,11 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import {routeNavigation} from '../../actions/route';
+import { addMessage } from '../../actions/messages';
+import { updateLastMessage } from '../../actions/rooms';
+import { getCurUserInfo } from '../../actions/getCurUserInfo';
+import { userJoinedRoom } from '../../actions/userJoinedRoom';
+import { userLeaveRoom } from '../../actions/userLeaveRoom';
 
 import './App.css';
 import { AuthorizationPage } from '../AuthorizationPage/AuthorizationPage';
@@ -11,9 +17,7 @@ import { ConnectedContactsListPage } from '../ContactsListPage/ContactsListPage'
 import { GroupChatSettings } from '../GroupChatSettings/GroupChatSettings';
 import { ConnectedUserList } from '../UserList/UserList';
 import { ConnectedAddUserToChatPage } from '../AddUserToChatPage/AddUserToChatPage';
-import {routeNavigation} from '../../actions/route';
-import { addMessage } from '../../actions/messages';
-import { updateLastMessage } from '../../actions/rooms';
+import { ConnectedStickerStore } from '../StickersStore/StickersStore';
 import createBrowserNotification from '../../helpers/createBrowserNotification';
 import api from '../../api';
 
@@ -46,6 +50,9 @@ const routeConfig = {
     },
     'add_new_user_to_chat_page':{
         view: ConnectedAddUserToChatPage,
+    },
+    'stickers_store':{
+        view: ConnectedStickerStore,
     }
 };
 
@@ -84,35 +91,35 @@ class App extends Component {
                 });
             }
         });
+
+        api.onUserJoinedRoom(room => this.props.dispatch(userJoinedRoom(room)));
+
+        api.onUserLeavedRoom((roomId)=>this.props.dispatch(userLeaveRoom(roomId)));
     }
 
-    componentWillMount(){
-        console.log(this.props);
+    componentWillMount() {
         this.loadApp()
-        .catch ((e)=>{
-            console.log(e);
-        })
-            
-        
             .then((user) => {
-                console.log(user);
-               if (user){
-                this.props.dispatch(routeNavigation({
-                    page: 'chat_list',
-                    payload: {
-                        footerNav: {
-                            active: 'chat'
+                if (user) {
+                    this.props.dispatch(getCurUserInfo(user));
+                    this.props.dispatch(routeNavigation({
+                        page: 'chat_list',
+                        payload: {
+                            footerNav: {
+                                active: 'chat'
+                            }
                         }
-                    }
-                }));
-               }
-               else {
-                this.props.dispatch(routeNavigation({
-                    page: 'authorization',
-                    payload: {
-                    }
-                }));
-               }
+                    }));
+                }
+                else {
+                    this.props.dispatch(routeNavigation({
+                        page: 'authorization',
+                        payload: {}
+                    }));
+                }
+            })
+            .catch((e) => {
+                console.log(e);
             });
     }
 

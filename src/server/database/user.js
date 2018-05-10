@@ -17,13 +17,23 @@ const TABLE = 'users';
 
 /**
  * @param {Db} db
+ * @param {Object} user
+ *
+ * @returns {Promise<User>}
+ */
+async function updateUserAvatar(db, user) {
+    return await db.collection(TABLE).updateOne({ _id: user._id }, { $set: { avatar: user.avatar } });
+}
+
+
+/**
+ * @param {Db} db
  * @param {string} sid Session ID
  *
  * @returns {Promise<User>}
  */
 async function findUserBySid(db, sid) {
     const session = await getSessionInfo(db, sid);
-    console.log(session);
     return getUser(db, session.userId);
 }
 
@@ -127,4 +137,5 @@ module.exports = {
     addUser,
     setCurrentUser,
     logoutUser,
+    updateUserAvatar,
 };

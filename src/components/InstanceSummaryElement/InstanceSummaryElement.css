@@ -2,7 +2,7 @@
     display: flex;
     align-items: center;
     box-sizing: border-box;
-    max-width: 100%;
+    width: 97vw;
     margin-left: 5px;
     margin-right: 5px;
     font-family: sans-serif;
@@ -11,9 +11,13 @@
     padding-left:0.3rem;
 }
 
+.InstanceSummaryElement__UnreadMessage{
+    box-shadow: 0 13px 25px 0 rgb(241, 53, 100);
+}
+
 .InstanceSummaryElement__info {
     text-align: left;
-    width: 80%;
+    width: 60%;
     margin-left: 10px;
 
 }
@@ -45,6 +49,7 @@
     text-overflow: ellipsis;
     word-break: break-all;
     word-wrap: break-word;
+    width: 50%;
 }
 
 .InstanceSummaryElement__desc_dark {
