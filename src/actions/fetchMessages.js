@@ -6,7 +6,6 @@ export default function fetchMessages(roomId) {
             type: 'MESSAGES_LOADING',
             loading: true
         });
-
         try {
             let state = getState();
             let messages;

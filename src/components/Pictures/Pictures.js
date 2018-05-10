@@ -106,12 +106,10 @@ export default class Pictures extends React.Component {
                 ratioSum += image.ratio;
             });
             const height = Math.floor((windowWidth - borderSummaryWidth) / ratioSum);
-            row.forEach(picture => {
-                const image = picture && picture.images && picture.images['preview_gif'],
-                    width = Math.round(height * image.ratio),
-                    view = <Picture width={width} height={height} src={image.url} type='collection' key={count} id={count++}/>;
-                picturesView.push(view);
-            });
+            for(let picture of row){
+                addToView(picture,height,count,picturesView);
+                count++;
+            }
         }
         return picturesView;
     }
@@ -131,5 +129,11 @@ export default class Pictures extends React.Component {
     }
 }
 
+function addToView(picture,height, count, picturesView) {
+    const image = picture && picture.images && picture.images['preview_gif'],
+        width = Math.round(height * image.ratio),
+        view = <Picture width={width} height={height} src={image.url} type='collection' key={count} id={count}/>;
+    picturesView.push(view);
+}
 
 export const ConnectedPictures = connect(stateToProps)(Pictures);

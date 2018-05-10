@@ -4,3 +4,10 @@ export const getCurUserInfo = (user) => {
         curUserInfo: user,
     }
 };
+
+export const updateUserAvatar = (avatar) => {
+    return {
+        type: 'USER_UPDATE_AVATAR',
+        avatar: avatar,
+    }
+};

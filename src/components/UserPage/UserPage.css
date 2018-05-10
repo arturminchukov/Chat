@@ -11,9 +11,8 @@
     bottom: 0;
 }
 
-
 .UserPage__UserInfo {
-    background-color: #F1B0C3;
+    background-color: #ffffff;
     display: flex;
     flex-flow: column;
     align-items: center;
@@ -25,22 +24,145 @@
     margin-top: 1rem;
 }
 
-.UserPage__UserName {
+.UserPage__Avatar_acronim_wrapper {
+    border: 8px solid #f13564;
+    border-radius: 50%;
+    width: 250px;
+    height: 250px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.UserPage__Avatar_acronim {
+    font-size: 160px;
+    color: #f13564;
+    border-radius: 50%;
+}
+
+.UserPage__Avatar_acronim_wrapper_xs {
+    border: 2px solid #f13564;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.UserPage__Avatar_acronim_xs {
+    font-size: 20px;
+    color: #f13564;
+    border-radius: 50%;
+}
+
+.UserPage__Avatar_acronim_wrapper_s {
+    border: 2px solid #f13564;
+    border-radius: 50%;
+    width: 64px;
+    height: 64px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.UserPage__Avatar_acronim_s {
+    font-size: 40px;
+    color: #f13564;
+    border-radius: 50%;
+}
+
+.UserPage__ChangePhoto__Overlay {
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    left: 0;
+    top: 0;
+    background-color: rgba(33, 29, 29, 0.93);
+}
+
+.UserPage__ChangePhoto__Overlay_photo {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    height: 60%;
+}
+
+.UserPage__ChangePhoto__Overlay_photo_image{
+    height:300px;
+}
+
+.UserPage__UserInfo_updatePhoto {
+    border-bottom: 1px solid black;
+}
+
+.UserPage__ChangePhoto__Overlay_photo_upload {
+    position: relative;
+    overflow: hidden;
+    width: 200px;
+    height: 20px;
+    background: #f13564;
+    border-radius: 3px;
+    padding: 8px 4px;
     color: #fff;
+    text-align: center;
+}
+
+.UserPage__ChangePhoto__Overlay_photo_upload input[type="file"] {
+    display: none;
+}
+
+.UserPage__ChangePhoto__Overlay_photo_submit {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-evenly;
+}
+
+.UserPage__ChangePhoto__Overlay_photo_submit button{
+    width:35%;
+    height:50px;
+    background-color: #f13564;
+    border:none;
+    border-radius: 10px;
+    color: #ffffff;
+    box-shadow: #ffffff;
+}
+
+.UserPage__ChangePhoto__Overlay_photo_delete {
+    margin-top: 20px;
+    border: none;
+    background: none;
+    color: #f13564;
+}
+
+.UserPage__UserName {
+    color: #f13564;
     text-align: start;
     font-weight: normal;
     font-size: 2.5rem;
+    margin-top: 5px;
+    margin-bottom: 5px;
 }
 
-.UserPage__UserPhone{
-    color:#fff;
+.UserPage__UserControls input {
+
+}
+
+.UserPage__UserPhone {
+    color: #fff;
+    margin-top: 5px;
+    margin-bottom: 5px;
 }
 
 .UserPage__UserControls > * {
     width: 100%;
     padding-top: .75rem;
-    padding-bottom: .75rem; 
-    font-size: 1.45rem;
+    padding-bottom: .75rem;
+    font-size: 2.2rem;
     background-color: #fff;
     border: none;
+    color: #f13564;
 }

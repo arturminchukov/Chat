@@ -57,6 +57,11 @@ class Api {
         return this._requestResponse(MESSAGES.CURRENT_USER);
     }
 
+
+    async setCurrentUserAvatar(newAvatar){
+        return this._requestResponse(MESSAGES.SET_CURRENT_USER_AVATAR, newAvatar);
+    }
+
     /**
      * Return all known users
      *

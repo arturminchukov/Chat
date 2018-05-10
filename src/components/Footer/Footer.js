@@ -23,7 +23,6 @@ export class Footer extends Component {
     }
 
     openStickers(){
-        console.log('openStickers');
         this.props.dispatch(routeNavigation({
             page: 'stickers_store',
             payload: {
