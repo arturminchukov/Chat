@@ -75,7 +75,7 @@ class App extends Component {
 
             this.props.dispatch(updateLastMessage(message));
 
-            if(window.Notification) {
+            if(window && window.Notification) {
                 if ((window.Notification.permission === 'granted')) {
                     const { roomId, userId, message: messageText } = message;
 
