@@ -39,7 +39,7 @@ describe('Reducer::CurrentUser', function () {
         const expectedNewState = {
             _id:-1,
             curUserInfo: {
-                _id: 'id1',
+                _id: -1,
                 name: 'name1',
                 email: 'email1',
             }
@@ -48,7 +48,7 @@ describe('Reducer::CurrentUser', function () {
         const newState = user(state, {
             type:'USER_GET_INFO',
             curUserInfo: {
-                _id: 'id1',
+                _id: -1,
                 name: 'name1',
                 email: 'email1',
             }

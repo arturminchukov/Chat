@@ -13,7 +13,6 @@ export default function rooms(state, action) {
             return {
                 ...state,
                 items: [action.room,...state.items],
-                newRoom: action.room,
             };
         case 'ROOM_DELETED':
             const newRooms = state.items.filter(room => room._id.toString()!== action.roomId.toString());
