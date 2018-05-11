@@ -17,9 +17,14 @@ const { ObjectId } = require('mongodb');
  */
 async function pageableCollection(collection, {
     lastId, order, limit = 10, ...query
-} = {}, selectModifier) {
+} = {}, selectModifier,lastTime) {
     const count = await collection.find(query).count();
-    if (lastId && selectModifier) {
+    if(lastTime){
+        query.lastMessageTime = {
+            $lt: lastTime
+        };
+    }
+    else if (lastId && selectModifier) {
         query._id = {
             [selectModifier]: ObjectId(lastId.toString())
         };
@@ -36,6 +41,7 @@ async function pageableCollection(collection, {
         queryBuilder = queryBuilder.sort(order);
     }
 
+
     if (typeof query._id === 'string') {
         query._id = ObjectId(query._id.toString());
     }
@@ -51,6 +57,10 @@ async function pageableCollection(collection, {
             lastId: items[items.length - 1]._id,
             ...query,
         };
+    }
+
+    if(items && items[0] && items[0].lastTime && next){
+        next.lastTime = items[items.length - 1].lastMessageTime;
     }
 
     return {

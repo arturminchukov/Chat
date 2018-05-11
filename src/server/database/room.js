@@ -2,6 +2,7 @@ const { ObjectId } = require('mongodb');
 const { insertOrUpdateEntity, pageableCollection } = require('./helpers');
 const { getUser } = require('./user');
 
+
 const TABLE = 'rooms';
 
 /**
@@ -58,6 +59,24 @@ async function updateUserTime(db,userId, roomId) {
     return await insertOrUpdateEntity(db.collection(TABLE), room);
 }
 
+
+/**
+ * @param {Db} db
+ * @param {Room} roomId
+ * @param {time} lastMessageTime
+ *
+ * @return {Promise<Room>}
+ */
+async function updateLastMessageTime(db,lastMessageTime, roomId) {
+    let room = await getRoom(db,roomId);
+
+    if(!room)
+        return;
+
+    room.lastMessageTime = lastMessageTime;
+    return await insertOrUpdateEntity(db.collection(TABLE), room);
+}
+
 /**
  * @param {Db} db
  * @param {{}} filter
@@ -76,10 +95,17 @@ async function getRooms(db, filter) {
  * @return {Promise<Pagination<Room>>}
  */
 async function getUserRooms(db, userId, filter) {
+    const selectModifier = filter && filter.lastTime;
     return pageableCollection(db.collection(TABLE), {
-        ...filter,
-        users: ObjectId(userId.toString()),
-    });
+            ...filter,
+            order: {
+                lastMessageTime: -1,
+            },
+            users: ObjectId(userId.toString()),
+        },
+        null,
+        selectModifier
+    );
 }
 
 /**
@@ -223,4 +249,5 @@ module.exports = {
     leaveRoom,
     dropRoom,
     updateUserTime,
+    updateLastMessageTime,
 };

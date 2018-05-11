@@ -12,6 +12,7 @@ export default function fetchRooms() {
                 rooms = await api.getCurrentUserRooms(state.next);
             else
                 rooms = await api.getCurrentUserRooms();
+
             const { items, next } = rooms;
 
             items.sort(compareMessages);

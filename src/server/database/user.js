@@ -22,7 +22,10 @@ const TABLE = 'users';
  * @returns {Promise<User>}
  */
 async function updateUserAvatar(db, user) {
-    return await db.collection(TABLE).updateOne({ _id: user._id }, { $set: { avatar: user.avatar } });
+    let newUser =  await db.collection(TABLE).updateOne({ _id: user._id }, { $set: { avatar: user.avatar } });
+    if(newUser && newUser.password)
+        delete newUser.password;
+    return newUser;
 }
 
 
@@ -34,7 +37,10 @@ async function updateUserAvatar(db, user) {
  */
 async function findUserBySid(db, sid) {
     const session = await getSessionInfo(db, sid);
-    return getUser(db, session.userId);
+    let newUser = await getUser(db, session.userId);
+    if(newUser && newUser.password)
+        delete newUser.password;
+    return newUser;
 }
 
 /**
@@ -47,7 +53,10 @@ async function getUser(db, userId) {
     if (!userId){
         return null;
     }
-    return db.collection(TABLE).findOne({ _id: ObjectId(userId.toString()) });
+    let newUser = await db.collection(TABLE).findOne({ _id: ObjectId(userId.toString()) });
+    if(newUser && newUser.password)
+        delete newUser.password;
+    return newUser;
 }
 
 /**
@@ -72,7 +81,10 @@ async function setCurrentUser(db, { userId, sid }) {
         sid: sid,
     };
     await saveSessionInfo(db, session);
-    return await findUserBySid(db, sid);
+    let newUser =  await findUserBySid(db, sid);
+    if(newUser && newUser.password)
+        delete newUser.password;
+    return newUser;
 }
 
 /**
@@ -98,13 +110,18 @@ async function logoutUser(db, sid) {
 async function getUsers(db, filter) {
     const selectModifier = filter['lastId']?'$lt':null;
 
-    return pageableCollection(db.collection(TABLE), {
+    let newUsers = await pageableCollection(db.collection(TABLE), {
             ...filter,
             order: {
                 _id: -1,
             },
         },
         selectModifier);
+    for(let newUser of newUsers.items) {
+        if (newUser && newUser.password)
+            delete newUser.password;
+    }
+    return newUsers;
 }
 
 /**
@@ -135,6 +152,9 @@ async function addUser(db, { email, password, name }) {
     };
     const result = await db.collection(TABLE).insertOne(userEntity);
     userEntity._id = result.insertedId;
+
+    if(userEntity && userEntity.password)
+        delete userEntity.password;
 
     return userEntity;
 }
