@@ -1,6 +1,6 @@
 const { findUserBySid, getUsers, addUser, setCurrentUser, logoutUser, updateUserAvatar } = require('./database/user');
 const {
-    joinRoom, leaveRoom, getRooms, getUserRooms, createRoom, getRoom, dropRoom, updateUserTime
+    joinRoom, leaveRoom, getRooms, getUserRooms, createRoom, getRoom, dropRoom, updateUserTime, updateLastMessageTime
 } = require('./database/room');
 const { getMessages, sendMessage } = require('./database/messages');
 const TYPES = require('./messages');
@@ -157,7 +157,6 @@ module.exports = function (db, io) {
         requestResponse(TYPES.CURRENT_USER, async () => {
             let user = await CurrentUser();
             if (user) {
-                delete user.password;
                 userJoinToChannel(user._id.toString());
             }
             return user;
@@ -209,6 +208,7 @@ module.exports = function (db, io) {
                 ...payload,
                 sid: sid,
             };
+            userJoinToChannel(payload.userId);
             return await setCurrentUser(db, payload);
         });
 
@@ -217,9 +217,9 @@ module.exports = function (db, io) {
             const user = await CurrentUser();
             getUserRooms(db, user._id, { limit: 0 })
                 .then(rooms => {
-                    rooms.forEach(room => {
+                    for(let room of rooms){
                         leaveRoomChannel(room._id);
-                    })
+                    }
                 });
             userLeaveChannel(user._id);
             return await logoutUser(db, sid);
@@ -353,13 +353,16 @@ module.exports = function (db, io) {
              * Обновляем время если посылаем сообщение*/
             if (userInRoom.status) {
                 userInRoom.roomId = payload.roomId;
-                updateUserTime(db, currentUser._id, payload.roomId)
+                updateUserTime(db, currentUser._id, payload.roomId);
             }
 
             const message = await sendMessage(db, {
                 ...payload,
                 userId: currentUser._id,
             });
+
+            if(message)
+                updateLastMessageTime(db,message.created_at,payload.roomId);
 
             newMessage(message);
 
