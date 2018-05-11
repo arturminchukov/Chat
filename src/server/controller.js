@@ -93,6 +93,15 @@ module.exports = function (db, io) {
             socket.join(`id:${userId}`);
         }
 
+        /**
+         * Leave socket channel, to broadcast messages inside Room
+         *
+         * @param {string} userId
+         */
+        function userLeaveChannel(userId) {
+            socket.leave(`id:${userId}`);
+        }
+
 
         /**
          * Broadcast messages inside Room about user joined
@@ -205,6 +214,14 @@ module.exports = function (db, io) {
 
         // Logout current user
         requestResponse(TYPES.LOGOUT_CURRENT_USER, async () => {
+            const user = await CurrentUser();
+            getUserRooms(db, user._id, { limit: 0 })
+                .then(rooms => {
+                    rooms.forEach(room => {
+                        leaveRoomChannel(room._id);
+                    })
+                });
+            userLeaveChannel(user._id);
             return await logoutUser(db, sid);
         });
 
