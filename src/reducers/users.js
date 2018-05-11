@@ -6,25 +6,24 @@ export default function users(state, action) {
         };
     }
     switch (action.type) {
-    case 'USERS_FETCH':
-        return {
-            ...state,
-            items: [...state.items, ...action.items],
-            next: action.next,
-            end: action.end,
-        };
-    case 'USER_SIGN_OUT':
-        return {
-            items: [],
-            next: true,
-        };
-    case 'USERS_RESET':
-        return {
-            ...state,
-            items: [],
-            next: null,
-        };
-    default:
-        return state;
+        case 'USERS_FETCH':
+            return {
+                ...state,
+                items: [...state.items, ...action.items],
+                next: action.next,
+                end: action.end,
+            };
+        case 'USER_SIGN_OUT':
+            return {
+                items: [],
+                next: true,
+            };
+        case 'USERS_RESET':
+            return {
+                items: [],
+                next: true,
+            };
+        default:
+            return state;
     }
 }

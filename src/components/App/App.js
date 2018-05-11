@@ -8,6 +8,7 @@ import { userJoinedRoom } from '../../actions/userJoinedRoom';
 import { userLeaveRoom } from '../../actions/userLeaveRoom';
 
 import './App.css';
+import '../InfiniteScroll/InfiniteScroll.css'
 import { AuthorizationPage } from '../AuthorizationPage/AuthorizationPage';
 import { ChatListPage } from '../ChatListPage/ChatListPage';
 import { AddRoomPage } from '../AddRoomPage/AddRoomPage';
@@ -33,7 +34,7 @@ const routeConfig = {
     'contacts_list': {
         view: ConnectedContactsListPage
     },
-    add_room_page: {
+    'add_room_page': {
         view: AddRoomPage,
     },
     chat_page: {
@@ -68,27 +69,25 @@ class App extends Component {
         this.loadApp = this.loadApp.bind(this);
 
         api.onMessage(message => {
-            if (this.destroy) {
-                return;
-            }
-
             if (this.props.payload.currentRoom === message.roomId) {
                 this.props.dispatch(addMessage(message));
             }
 
             this.props.dispatch(updateLastMessage(message));
 
-            if ((Notification.permission === 'granted')) {
-                const { roomId, userId, message: messageText } = message;
+            if(window.Notification) {
+                if ((window.Notification.permission === 'granted')) {
+                    const { roomId, userId, message: messageText } = message;
 
-                Promise.all([api.getUser(userId), api.getRoom(roomId)]).then((result) => {
-                    const [{ name: userName }, { name: roomName }] = result;
+                    Promise.all([api.getUser(userId), api.getRoom(roomId)]).then((result) => {
+                        const [{ name: userName }, { name: roomName }] = result;
 
-                    createBrowserNotification(
-                        roomName,
-                        `${userName}: ${messageText}`,
-                    );
-                });
+                        createBrowserNotification(
+                            roomName,
+                            `${userName}: ${messageText}`,
+                        );
+                    });
+                }
             }
         });
 

@@ -147,3 +147,7 @@ ReactDOM.render(
 
 
 registerServiceWorker();
+
+const dispatch = store.dispatch;
+
+export { dispatch };

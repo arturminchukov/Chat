@@ -1,7 +1,7 @@
 .infinite {
 
 }
-.spinner {
+/*.spinner {
     margin: auto;
     width: 50px;
     height: 40px;
@@ -37,7 +37,7 @@
 .spinner .rect5 {
     -webkit-animation-delay: -0.8s;
     animation-delay: -0.8s;
-}
+}*/
 
 @-webkit-keyframes sk-stretchdelay {
     0%, 40%, 100% { -webkit-transform: scaleY(0.4) }

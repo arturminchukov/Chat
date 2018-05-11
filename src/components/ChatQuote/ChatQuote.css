@@ -11,11 +11,9 @@
 }
 
 .ChatQuote_left {
-    margin-left: 20px;
 }
 
 .ChatQuote_right {
-    margin-right: 20px;
     background-color: #F13564;
 }
 
@@ -23,7 +21,7 @@
     margin: 0;
     font: 16px 'Myriad Pro';
     margin-bottom: 5px;
-    word-break: break-all;
+    word-break: break-word;
 }
 
 .ChatQuote__user {
@@ -63,6 +61,7 @@
 }
 .ChatQuote__text__img {
     height: 100px;
+    max-width: 100%;
 }
 
 .ChatQuote__text__link {

@@ -1,19 +1,36 @@
 import api from '../api';
+import { routeNavigation } from './route';
 
-export default function addRoom(name, user) {
+export default function addRoom(name, usersId) {
     return async function (dispatch) {
         try {
             // Loading
             let room = null;
             room = await api.createRoom(name);
-            room = await api.currentUserJoinRoom(room._id);
-            for (let current of user) {
-                await api.userJoinRoom(current, room._id);
+            api.currentUserJoinRoom(room._id);
+
+            Promise.all(usersId.map(userId => api.userJoinRoom(userId,room._id)));
+
+            let usersName = {},
+            users = await Promise.all(usersId.map(userId=>api.getUser(userId)));
+
+            for (let user of users) {
+                usersName[user._id] = user;
             }
+
             dispatch({
                 type: 'ROOM_ADD',
                 room,
             });
+            dispatch(routeNavigation({
+                page: 'chat_page',
+                payload: {
+                    /*...this.props.payload,*/
+                    usersName: usersName,
+                    currentRoom: room._id,
+                    prevPage: 'chat_list',
+                },
+            }));
         } catch (error) {
             dispatch({
                 type: 'ROOM_ADD_ERROR',

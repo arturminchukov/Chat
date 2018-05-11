@@ -6,9 +6,6 @@ import {routeNavigation} from '../../actions/route';
 import api from '../../api';
 import signInUser from '../../actions/signInUser';
 import Message from '../Message/Message';
-import { addMessage } from '../../actions/messages';
-import { updateLastMessage } from '../../actions/rooms';
-import createBrowserNotification from '../../helpers/createBrowserNotification';
 
 const updateInputField = (inputsState, input, field, value) => {
     return {
@@ -104,17 +101,19 @@ export const AuthorizationPage = connect()(
         }
 
         componentDidMount() {
-            Notification.requestPermission().then(function(result) {
-                if (result === 'denied') {
+            if(window.Notification) {
+                window.Notification.requestPermission().then(function (result) {
+                    if (result === 'denied') {
 
-                  return;
-                }
-                if (result === 'default') {
+                        return;
+                    }
+                    if (result === 'default') {
 
-                  return;
-                }
+                        return;
+                    }
 
-              });
+                });
+            }
         }
 
         async singUp(login, password, name) {
@@ -138,23 +137,6 @@ export const AuthorizationPage = connect()(
         }
 
         async singIn(login, password) {
-            api.onMessage((message) => {
-                this.props.dispatch(updateLastMessage(message));
-                this.props.dispatch(addMessage(message));
-            
-                if ((Notification.permission === "granted")) {
-                    const { roomId, userId, message: messageText } = message;
-            
-                    Promise.all([ api.getUser(userId), api.getRoom(roomId)]).then((result) => {
-                        const [{ name: userName }, { name: roomName }] = result;
-            
-                        createBrowserNotification(
-                            roomName,
-                            `${userName}: ${messageText}`,
-                        );
-                    });
-                }
-            });
 
             const user = await this.props.dispatch(signInUser(login, password));
 

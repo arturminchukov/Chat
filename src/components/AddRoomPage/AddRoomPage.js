@@ -3,15 +3,14 @@ import { connect } from 'react-redux';
 import './AddRoomPage.css';
 import { ConnectedHeader } from '../Header/Header';
 import fetchUsers from '../../actions/fetchUsers';
-import { InfiniteRooms } from '../InfiniteRooms/InfiniteRooms';
+import  { UserList } from '../UserList/UserList';
 import addRoom from '../../actions/rooms';
-import { routeNavigation } from '../../actions/route';
 
 const stateToProps = state => ({
-    items: state.users.items,
+    users: state.users.items,
     next: state.users.next,
     end: state.users.end,
-    newRoom: state.rooms.newRoom,
+    currentUser: state.user,
 });
 
 export const AddRoomPage = connect(stateToProps)(class AddRoomPage extends React.Component {
@@ -19,117 +18,94 @@ export const AddRoomPage = connect(stateToProps)(class AddRoomPage extends React
         super(props);
         this.state = {
             loading: true,
+            activeContacts: {},
+            error: null,
         };
         this.fetch = this.fetch.bind(this);
+        this.handleClick = this.handleClick.bind(this);
         this.addRoomHandle = this.addRoomHandle.bind(this);
-        this.mas = [];
-    }
-    componentDidMount() {
-        this.props.dispatch(
-            {
-                type: 'USERS_RESET',
-            });
-        this.fetch()
-            .then(() => {
-                this.setState({ loading: false });
-            })
-            .catch((error) => {
-                this.setState({
-                    loading: false,
-                    error,
-                });
-            });
     }
 
-    addRoomHandle() {
-        const namePoom = document.getElementById('Room-name').value;
-        return this.props.dispatch(addRoom({ name: namePoom }, this.mas));
+    handleClick(contactId) {
+        let activeContacts = this.state.activeContacts;
+
+        if (activeContacts && activeContacts[contactId])
+            delete activeContacts[contactId];
+        else
+            activeContacts[contactId] = contactId;
+
+        const error =  null;
+
+        this.setState({
+            activeContacts: activeContacts,
+            error
+        });
     }
 
-    componentWillReceiveProps(props) {
-        if (props.newRoom && (!this.props.newRoom || props.newRoom._id !== this.props.newRoom._id)) {
-            this.enterRoom(props.newRoom._id);
+    async addRoomHandle() {
+        const nameRoom = document.getElementById('Room-name').value;
+        let roomUsers = [];
+        if (this.state.activeContacts) {
+            for (let user in this.state.activeContacts) {
+                if (this.state.activeContacts.hasOwnProperty(user))
+                    roomUsers.push(user);
+            }
         }
+
+        if (roomUsers.length === 0) {
+            this.setState({
+                error: 'Choose one or more users',
+            });
+            return;
+        }
+
+        if (!nameRoom) {
+            this.setState({
+                error: 'Input your name of room',
+            });
+            return;
+        }
+
+        return this.props.dispatch(addRoom({ name: nameRoom }, roomUsers));
     }
-
-    enterRoom = (roomId) => {
-        this.props.dispatch(routeNavigation({
-            page: 'chat_page',
-            payload: {
-                ...this.props.payload,
-                currentRoom: roomId,
-                prevPage: 'contacts_list'
-            },
-        }));
-    };
-
 
     fetch() {
         return this.props.dispatch(fetchUsers());
     }
 
     render() {
-        const listUses = this.props.items.map(el => (
-            <div className="UsersList__ListElement" key={el._id}>
-                <div className="ListElement__Photo">
-                    <img
-                        src="https://avatars.mds.yandex.net/get-pdb/1008348/cab77028-8042-4d20-b343-a1498455e4c8/s1200"
-                        alt={el.name}
-                    />
-                </div>
-                <div className="ListElement__Desc">
-                    <p
-                        className="Desc__Name"
-                    >
-                        {el.name}
-                        <input
-                            type="checkbox"
-                            onClick={(e) => {
-                                if (e.target.checked) {
-                                    this.mas.push(el._id);
-                                } else {
-                                    this.mas.splice(this.mas.indexOf(el.id), 1);
-                                }
-                            }}
-                        />
-                    </p>
-                    <p className="Desc__Status">{el.online && 'online'}</p>
-                </div>
-            </div>
-        ));
+        let displayedContacts = this.props.users;
+        displayedContacts.filter(user =>
+            user._id !== this.props.currentUser._id
+        );
+
+
         return (
             <div className="AddRoomPage">
-                <ConnectedHeader buttonBack buttonSearch={false} buttonSettings={false} contentType="add-room" />
-                <div
-                    className="AddForm_InputField"
-                >
-                    <input
-                        type="text"
-                        id="Room-name"
-                        className="InputField_Name"
-                        placeholder="Введите название беседы"
-                    />
-                    <p>
-                        <button
-                            className="InputField_Accept"
-                            onClick={this.addRoomHandle}
-                        >
+                <div className="AddRoomPage__Header">
+                    <ConnectedHeader buttonBack buttonSearch={false} buttonSettings={false} contentType="add-room"/>
+                    <div className='AddRoomPage__Info_area'>
+                        {this.state.error}
+                    </div>
+                    <div className="AddForm_InputField">
+                        <input type="text" id="Room-name" className="InputField_Name"
+                               style={{animationName: this.state.error==='Input your name of room' ? 'input-error' : ''}} placeholder="Введите название беседы"/>
+                        <p>
+                            <button className="InputField_Accept" onClick={this.addRoomHandle}>
                                 OK
-                        </button>
-                    </p>
+                            </button>
+                        </p>
+                    </div>
                 </div>
-                <InfiniteRooms fetchNext={this.fetch} next={this.props.next}>
-                    {this.state.loading && (
-                        <div className="spinner">
-                            <div className="rect1" />
-                            <div className="rect2" />
-                            <div className="rect3" />
-                            <div className="rect4" />
-                            <div className="rect5" />
-                        </div>
-                    )}
-                    {listUses}
-                </InfiniteRooms>
+                <div className="AddRoomPage__Content">
+                    <UserList
+                        users={displayedContacts}
+                        fetchNext={this.fetch}
+                        next={this.props.next}
+                        handleClick={this.handleClick}
+                        activeContacts={this.state.activeContacts}
+                    />
+                </div>
             </div>
         );
     }

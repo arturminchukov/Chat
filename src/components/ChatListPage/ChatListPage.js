@@ -28,24 +28,6 @@ export const ChatListPage = connect(stateToProps)(class ChatListPage extends Rea
         this.submitHandler = this.submitHandler.bind(this);
     }
 
-
-    componentDidMount() {
-        this.props.dispatch({
-                type: 'ROOMS_RESET',
-            });
-        this.fetch()
-            .then(() => {
-                this.setState({ loading: false });
-            })
-            .catch((error) => {
-                this.setState({
-                    loading: false,
-                    error,
-                });
-            });
-    }
-
-
     fetch() {
         return this.props.dispatch(fetchRooms());
     }
@@ -64,15 +46,6 @@ export const ChatListPage = connect(stateToProps)(class ChatListPage extends Rea
         return (
             <div className="ChatListPage">
                 <ConnectedHeader buttonBack={false} buttonSearch={false} buttonSettings={false} contentType="chats" />
-                {this.state.loading && (
-                    <div className="spinner">
-                        <div className="rect1" />
-                        <div className="rect2" />
-                        <div className="rect3" />
-                        <div className="rect4" />
-                        <div className="rect5" />
-                    </div>
-                )}
                 {this.state.error && (
                     <div>
                         Something is BROKEN!!!

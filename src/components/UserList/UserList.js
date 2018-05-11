@@ -17,22 +17,29 @@ export class UserList extends Component {
     }
 
     render() {
-        const { users, fetchNext, next } = this.props;
+        const { users, fetchNext, next ,activeContacts} = this.props;
+
         let userListContent = '';
         if (users && users.length) {
-            userListContent = users.map(contact => (
-                <InstanceSummaryElement
+            userListContent = users.map(contact => {
+                let activeClassModifier=false;
+                if(activeContacts && activeContacts[contact._id])
+                    activeClassModifier=true;
+                return <InstanceSummaryElement
                     key={contact._id}
+                    active={activeClassModifier}
                     summary={{
                         contact,
                         title: `${contact.name}`,
                         author: `${contact.online ? 'online' : ''}`,
                         id: `${contact._id}`,
+                        typeModifier:activeClassModifier,
                     }}
                     onclick={this.clickHandler.bind(this)}
-                />));
+                />
+            });
         } else {
-            userListContent = <div className="UserList__empty"><p>No contacts here yet...</p></div>;
+            userListContent = '';
         }
 
         return (
