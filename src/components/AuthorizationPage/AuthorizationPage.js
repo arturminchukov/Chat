@@ -101,7 +101,7 @@ export const AuthorizationPage = connect()(
         }
 
         componentDidMount() {
-            if(window && window.Notification) {
+            if(window && window.Notification && window.Notification.requestPermission) {
                 window.Notification.requestPermission().then(function (result) {
                     if (result === 'denied') {
                         return;
