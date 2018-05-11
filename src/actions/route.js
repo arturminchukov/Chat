@@ -1,7 +1,10 @@
 import { dispatch } from '../index';
+import { store } from '../index';
 import { resetUsers } from './users';
 
 export const routeNavigation = ({ page, payload = {} }) => {
+    debugger;
+    let b = store;
     if (page === 'chat_list')
         dispatch({
             type: 'ROOMS_RESET',
