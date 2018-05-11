@@ -101,16 +101,20 @@ export const AuthorizationPage = connect()(
         }
 
         componentDidMount() {
-            if(window && window.Notification && window.Notification.requestPermission) {
-                window.Notification.requestPermission().then(function (result) {
-                    if (result === 'denied') {
-                        return;
-                    }
-                    if (result === 'default') {
-                        return;
-                    }
+            try {
+                if (window && window.Notification && window.Notification.requestPermission) {
+                    window.Notification.requestPermission().then(function (result) {
+                        if (result === 'denied') {
+                            return;
+                        }
+                        if (result === 'default') {
+                            return;
+                        }
 
-                });
+                    });
+                }
+            }catch (error){
+                console.log(error);
             }
         }
 
