@@ -24,7 +24,7 @@ export default function rooms(state, action) {
         case 'ROOMS_FETCH':
             return {
                 ...state,
-                items: [...state.items, ...action.items],
+                items: [...state.items, ...action.items].sort(compareMessages),
                 next: action.next,
                 end: action.end,
             };
@@ -37,7 +37,7 @@ export default function rooms(state, action) {
             return {
                 ...state,
                 items: [],
-                next: null,
+                next: true,
             };
         case 'ROOMS_UPDATE_LAST_MESSAGE':
             let newItems = [...state.items],

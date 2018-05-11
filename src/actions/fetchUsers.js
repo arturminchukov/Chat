@@ -3,14 +3,16 @@ import api from '../api';
 export default function fetchUsers() {
     return async function (dispatch, getState) {
         try {
-            const users = await api.getUsers(getState().users.next);
-            const { items, next } = users;
-            const end = !!(next);
+            const state = getState().users;
+            const users = await getUsers(state);
+            if(!users)
+                return;
+
+            const {next,items} = users;
             dispatch({
                 type: 'USERS_FETCH',
                 items,
                 next,
-                end,
             });
         } catch (error) {
             dispatch({
@@ -19,4 +21,13 @@ export default function fetchUsers() {
             });
         }
     };
+}
+
+async function getUsers(state) {
+    if (state && !state.next)
+        return null;
+    else if (state && state.next && state.next.lastId)
+        return await api.getUsers(state.next);
+    else
+        return await api.getUsers();
 }

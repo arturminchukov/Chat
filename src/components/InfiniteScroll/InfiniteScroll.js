@@ -1,5 +1,5 @@
 import * as React from 'react';
-//import './InfiniteScroll.css';
+import './InfiniteScroll.css';
 
 const THRESHOLD = 300;
 
@@ -29,7 +29,7 @@ export class InfiniteScroll extends React.Component {
     }
 
     componentDidMount() {
-        document.addEventListener('scroll', this.onScroll, {passive: true});
+        document.addEventListener('scroll', this.onScroll, { passive: true });
         this.onScroll();
     }
 
@@ -37,11 +37,11 @@ export class InfiniteScroll extends React.Component {
         document.removeEventListener('scroll', this.onScroll);
     }
 
-    componentDidUpdate() {        
-        if (document.documentElement.scrollTop+window.innerHeight + 254 >= document.documentElement.scrollHeight){
+    componentDidUpdate() {
+      /*  if (document.documentElement.scrollTop + window.innerHeight + 254 >= document.documentElement.scrollHeight) {
             //document.documentElement.scrollTop = document.documentElement.scrollHeight;
-        }     
-        this.onScroll();
+        }
+        this.onScroll();*/
     }
 
     onScroll() {
@@ -55,27 +55,37 @@ export class InfiniteScroll extends React.Component {
         if (this.props.scrollDirection === 'up' && scrollTop < THRESHOLD && this.props.next) {
             // document.documentElement.scrollTop = 1.01 * THRESHOLD;
             this.nextPage();
-        } else if (this.props.scrollDirection === 'down' && scrollTop + windowHeight > containerHeight - THRESHOLD && this.props.next) {
+        } else if (this.props.scrollDirection === 'down' && scrollTop + windowHeight > (containerHeight || 0) - THRESHOLD && this.props.next) {
             // document.documentElement.scrollTop = 0.99 * (containerHeight - THRESHOLD - windowHeight);
             this.nextPage();
         }
     }
 
     async nextPage() {
-        this.setState({loading: true});
+        this.setState({ loading: true });
         try {
             await this.props.fetchNext();
         } catch (err) {
             console.error(err);
         } finally {
-            this.setState({loading: false});
+            this.setState({ loading: false });
         }
     }
 
     render() {
+
+        const spinner = this.state.loading ?
+            <div className="spinner">
+                <div className="rect1"/>
+                <div className="rect2"/>
+                <div className="rect3"/>
+                <div className="rect4"/>
+                <div className="rect5"/>
+            </div> : '';
         return (
             <div className="InfiniteScroll" ref={(container) => this.container = container}>
                 {this.props.children}
+                {spinner}
             </div>
         );
     }

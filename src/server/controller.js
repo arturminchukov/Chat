@@ -284,6 +284,7 @@ module.exports = function (db, io) {
         requestResponse(TYPES.CURRENT_USER_JOIN_ROOM, async ({ roomId }) => {
             const currentUser = await CurrentUser();
 
+            joinToRoomChannel(roomId);
             const payload = {
                 roomId,
                 userId: currentUser._id,

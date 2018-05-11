@@ -96,13 +96,22 @@ async function logoutUser(db, sid) {
  * @return {Promise<Pagination<User>>}
  */
 async function getUsers(db, filter) {
-    return pageableCollection(db.collection(TABLE), filter);
+    const selectModifier = filter['lastId']?'$lt':null;
+
+    return pageableCollection(db.collection(TABLE), {
+            ...filter,
+            order: {
+                _id: -1,
+            },
+        },
+        selectModifier);
 }
 
 /**
  * @param {Db} db
  * @param {string} email
  * @param {string} password
+ * @param {string} name
  *
  * @return {Promise<Message>}
  */

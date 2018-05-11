@@ -22,6 +22,7 @@ export class InstanceSummaryElement extends Component {
         const {
             title, description, author, descModifiers,timestamp,typeModifier,contact
         } = this.props && this.props.summary;
+
         let titleClasses = 'InstanceSummaryElement__title';
         let descClasses = 'InstanceSummaryElement__desc';
         const unreadMessageClass = typeModifier?'InstanceSummaryElement__UnreadMessage':'';

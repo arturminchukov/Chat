@@ -87,7 +87,7 @@ export default class Header extends Component {
                 contentTitle = 'BCG';
                 break;
             case 'add-room':
-                contentTitle = 'Создать kомнату';
+                contentTitle = 'Create room';
                 break;
             case 'contacts':
                 contentTitle = 'Contacts';

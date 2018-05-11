@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { InstanceSummaryElement } from '../InstanceSummaryElement/InstanceSummaryElement';
 import './ChatList.css';
-import { InfiniteRooms } from '../InfiniteRooms/InfiniteRooms';
+import { InfiniteScroll } from '../InfiniteScroll/InfiniteScroll';
 import { connect } from 'react-redux';
 import { routeNavigation } from '../../actions/route';
 import api from '../../api';
@@ -13,6 +13,7 @@ const stateToProps = state => ({
 });
 
 export const ChatList = connect(stateToProps)(class ChatList extends React.Component {
+
     async enterRoom(roomId) {
         let selectedRoom;
         for (let room of this.props.rooms) {
@@ -42,14 +43,14 @@ export const ChatList = connect(stateToProps)(class ChatList extends React.Compo
         const { rooms, fetchNext, next } = this.props;
 
         return (
-            <InfiniteRooms fetchNext={fetchNext} next={next}>
+            <InfiniteScroll fetchNext={fetchNext} next={next} scrollDirection='down'>
+                <div>
                 {rooms.map((room) => {
                     let roomName = room.name,
                         date = new Date(),
                         author = '',
                         description = '',
                         timestamp = '';
-
                     if (room && room.lastMessage && room.lastMessage.user) {
                         date.setTime(room.lastMessage.created_at);
                         author = room.lastMessage.user;
@@ -80,7 +81,8 @@ export const ChatList = connect(stateToProps)(class ChatList extends React.Compo
                         onclick={this.enterRoom.bind(this)}
                     />);
                 })}
-            </InfiniteRooms>
+                </div>
+            </InfiniteScroll>
         );
     }
 });

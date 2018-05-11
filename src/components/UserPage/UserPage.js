@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { ConnectedHeader } from '../Header/Header';
 import { FooterNav } from '../FooterNav/FooterNav';
 import { routeNavigation } from '../../actions/route';
 import api from '../../api';
@@ -118,7 +117,6 @@ export class UserPage extends Component {
 
         return (
             <div className="UserPage">
-                <ConnectedHeader buttonBack={false} contentType="settings"/>
                 <div className="UserPage__UserInfo">
                     <h1 className="UserPage__UserName">
                         {name}
