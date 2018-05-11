@@ -84,7 +84,6 @@ class Api {
 
     /**
      * logout current user
-     * @param {string} userId
      * @return {Promise<User>}
      * */
     async logoutCurrentUser() {
