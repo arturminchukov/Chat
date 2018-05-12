@@ -125,20 +125,15 @@ async function createRoom(db, currentUser, room) {
         existsRoom = await collection.findOne({ name: room.name });
     }
 
-    if (!existsRoom) {
+    if (existsRoom) {
         // If we clone room
         delete room._id;
-
-        room.users = room.users || [];
-        room.users.push(currentUser._id);
-
-        return insertOrUpdateEntity(collection, room);
     }
+    console.log(1);
+    room.users = room.users || [];
+    room.users.push(currentUser._id);
 
-    return {
-        error: 'Room with same name already exists',
-        code: 409,
-    };
+    return insertOrUpdateEntity(collection, room);
 }
 
 /**
