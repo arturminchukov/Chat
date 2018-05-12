@@ -9,6 +9,43 @@
     align-content: stretch;
 }
 
+.ChatListPage__Header{
+    width: inherit;
+    position: fixed;
+}
+
+.ChatListPage__Content{
+    margin-top: 50px;
+    width: inherit;
+    margin-bottom: 50px;
+    height: max-content;
+}
+
+
+.ChatList_AddButton {
+    height: 35px;
+    width: 35px;
+    border-radius: 50%;
+    background: #ffffff00;
+    color: #F13564;
+    line-height: 25px;
+    font-size: 20px;
+    position: fixed;
+    right: 10px;
+    top: 10px;
+    text-align: center;
+    border: 2px solid rgb(241, 53, 100);
+}
+
+.ChatList_AddButton:focus {
+    outline: none;
+}
+
+.ChatList_AddButton:active {
+    box-shadow: inset 0 0 15px 0 rgb(241, 53, 100);
+}
+
+
 .Emotion{
     width: 30px;
     height: 30px;

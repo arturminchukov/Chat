@@ -1,27 +1,3 @@
 .ChatList {
 
 }
-
-.ChatList_AddButton {
-    height: 70px;
-    width: 70px;
-    border-radius: 50%;
-    background: #ffffff00;
-    color: #F13564;
-    line-height: 50px;
-    font-size: 40px;
-    position: fixed;
-    right: 10px;
-    bottom: 70px;
-    text-align: center;
-    border: 2px solid rgb(241, 53, 100);
-}
-
-.ChatList_AddButton:focus {
-    outline: none;
-}
-
-.ChatList_AddButton:active {
-    box-shadow: inset 0 0 15px 0 rgb(241, 53, 100);
-}
-

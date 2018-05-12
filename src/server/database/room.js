@@ -116,15 +116,17 @@ async function getUserRooms(db, userId, filter) {
  * @return {Promise<Room>}
  */
 async function createRoom(db, currentUser, room) {
-    if (!room.name) {
-        throw new Error('Cannot create room without name');
+    // if (!room.name) {
+    //     throw new Error('Cannot create room without name');
+    // }
+    let existsRoom = false,
+        collection = db.collection(TABLE);
+    if (room.name) {
+        existsRoom = await collection.findOne({ name: room.name });
     }
 
-    let collection = db.collection(TABLE),
-        existsRoom = await collection.findOne({ name: room.name });
-
     if (!existsRoom) {
-    // If we clone room
+        // If we clone room
         delete room._id;
 
         room.users = room.users || [];

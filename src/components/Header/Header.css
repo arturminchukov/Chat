@@ -27,6 +27,7 @@
 
 .Header__content__item > * {
     margin: 0;
+    font-size: 16px;
 }
 
 .Header__search_wrapper {
