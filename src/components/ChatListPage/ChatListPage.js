@@ -45,20 +45,25 @@ export const ChatListPage = connect(stateToProps)(class ChatListPage extends Rea
     render() {
         return (
             <div className="ChatListPage">
-                <ConnectedHeader buttonBack={false} buttonSearch={false} buttonSettings={false} contentType="chats" />
-                {this.state.error && (
-                    <div>
-                        Something is BROKEN!!!
-                        <p>{this.state.error.message}</p>
-                    </div>
-                )}
-                <ChatList
-                    rooms={this.props.items}
-                    fetchNext={this.fetch}
-                    next={this.props.next}
-                />
-                <FooterNav active={this.props.payload.footerNav.active} />
-                <button className="ChatList_AddButton" onClick={this.submitHandler} >+</button>
+                <div className='ChatListPage__Header'>
+                    <ConnectedHeader buttonBack={false} buttonSearch={false} buttonSettings={false}
+                                     contentType="chats"/>
+                    {this.state.error && (
+                        <div>
+                            Something is BROKEN!!!
+                            <p>{this.state.error.message}</p>
+                        </div>
+                    )}
+                    <button className="ChatList_AddButton" onClick={this.submitHandler}>+</button>
+                </div>
+                <div className="ChatListPage__Content">
+                    <ChatList
+                        rooms={this.props.items}
+                        fetchNext={this.fetch}
+                        next={this.props.next}
+                    />
+                </div>
+                <FooterNav active={this.props.payload.footerNav.active}/>
             </div>
         );
     }

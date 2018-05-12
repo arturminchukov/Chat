@@ -40,14 +40,28 @@ export const ChatList = connect(stateToProps)(class ChatList extends React.Compo
     }
 
     render() {
-        const { rooms, fetchNext, next } = this.props;
+        const { rooms, fetchNext, next ,curUserInfo} = this.props;
+
 
         return (
             <InfiniteScroll fetchNext={fetchNext} next={next} scrollDirection='down'>
                 <div>
                 {rooms.map((room) => {
-                    let roomName = room.name,
-                        date = new Date(),
+                    let roomName = room.name ? room.name : '';
+                    let usersName = room.usersName;
+                    if(!room.name) {
+                        usersName = usersName.filter(
+                            userName => userName._id !== curUserInfo._id
+                        );
+
+                        if(usersName.length === 1 ){
+                            roomName=usersName[0].userName;
+                        }else if(usersName.length >1 ){
+                            usersName.forEach(userName => roomName+=userName.userName+'');
+                        }
+                    }
+
+                    let date = new Date(),
                         author = '',
                         description = '',
                         timestamp = '';
@@ -61,10 +75,6 @@ export const ChatList = connect(stateToProps)(class ChatList extends React.Compo
                     let typeModifier;
                     if (room && room.lastMessage)
                         typeModifier = !room.lastMessage.readByUser;
-
-                    if (roomName.split(' ').includes(this.props.curUserInfo.name)) {
-                        roomName = roomName.replace(this.props.curUserInfo.name, '');
-                    }
 
                     const messageAuthor = author.name ? author.name : '';
                     return (<InstanceSummaryElement

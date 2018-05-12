@@ -63,29 +63,45 @@ export class ContactsListPage extends Component {
     };
 
     createRoom = async (contactId) => {
-        const UserName = await api.getUser(contactId);
-        const curUserName =  this.props.curUserInfo.name;
-        this.props.dispatch(addRoom({ name: `${UserName.name} ${curUserName}` }, [contactId]));
+        const userName = await api.getUser(contactId);
+        const curUser = this.props.curUserInfo;
+        this.props.dispatch(addRoom({
+                usersName: [
+                    {
+                        _id: curUser._id,
+                        userName: curUser.name,
+                    },
+                    {
+                        _id: userName._id,
+                        userName: userName.name,
+                    }
+                ]
+            },
+            [userName._id]
+        ));
     };
 
     handleClick(contactId) {
         /*
          * if !next all currentUserRooms has been fetched
          */
+        const curUserInfo = this.props.curUserInfo;
         let createRoom = this.createRoom;
         let enterRoom = this.enterRoom;
 
         function searchCommonRoom(currentUserRooms) {
             const userRooms = currentUserRooms.items || currentUserRooms;
-            const commonRoom = userRooms.filter((room) => {
+            return userRooms.filter((room) => {
                 const { users } = room;
-                return (users.length === 2 && users.includes(contactId));
+                if(!contactId === curUserInfo._id)
+                    return (users.length === 2 && users.includes(contactId) && !room.name);
+                else
+                    return (users.length === 1 && users.includes(contactId) && !room.name)
             });
-            return commonRoom;
         }
 
         async function decideAsync(createRoom, enterRoom) {
-            let currentUserRooms = await api.getCurrentUserRooms();
+            let currentUserRooms = await api.getCurrentUserRooms({limit:0});
             let commonRoom = searchCommonRoom(currentUserRooms);
             if (!commonRoom.length) {
                 createRoom(contactId);

@@ -75,10 +75,9 @@ export const AddRoomPage = connect(stateToProps)(class AddRoomPage extends React
 
     render() {
         let displayedContacts = this.props.users;
-        displayedContacts.filter(user =>
+        displayedContacts = displayedContacts.filter(user =>
             user._id !== this.props.currentUser._id
         );
-
 
         return (
             <div className="AddRoomPage">
