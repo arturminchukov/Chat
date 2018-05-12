@@ -47,6 +47,12 @@
     background-position: center
 }
 
+.Footer__Recognize{
+    background: url('../../assets/icons/micro.png') no-repeat;
+    background-size:70% 70%;
+    background-position: center
+}
+
 .Footer__Emodgy{
     position: relative;
     background: url('../../assets/icons/smile.png') no-repeat;
